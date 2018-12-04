@@ -1,0 +1,606 @@
+#+Title: A beginner's demo
+#+Author: imfine
+#+Email: lorniu@gmail.com
+
+#+ANIM:  fade/slide 1200
+#+PROPS: contentWidth={1200}
+# #+THEME: { primary: "lightgreen", secondary: "#222222" }, { primary: "Helvetica", }
+# #+THEME: { primary: "pink", secondary: "#222222" }, { primary: "Helvetica", secondary: { name: 'Droid Serif', googleFont: true, styles: ['400', '700i'] } }
+#+CODE_THEME: { backgroundColor: '#fefefe', fontSize: '30px', borderRadius: '5px' }
+#+PRED: const noteCss = {background: 'black', fontSize: '12px', padding: '1em'};
+#+PRED: const trans1 = (t, f) => ({ transform: ` translate3d(0%, ${t ? 100 : 0}%, 0) rotate(${t ? (f ? -180 : 180) : 0}deg) `, backgroundColor: t ? '#26afff' : '#222' });
+#+PRED: const imgs = { m: 'http://45.63.55.2/aaa/img/gqj-004.jpg', n: 'http://45.63.55.2/aaa/img/gqj-001.jpg' };
+
+
+* Index
+
+#+ATTR_HTML: :style {{position: 'absolute', left: 20, top: -50}}
+[[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
+
+#+ATTR_HTML: :type h2 fit :textColor red
+Ox-Spectacle User Guide
+
+#+ATTR_HTML: :margin 50px 0 80px 0
+------------------
+
+ReactJS based *Spectacle* is a libary by [[https://github.com/FormidableLabs/spectacle][FormidableLabs]], and it is INTERESTING.
+I wrote this backend for Emacs's *Org-Mode*,
+wish that it can simplify the *PRESENTATION* creation flow.
+
+* It's simple
+
+#+ATTR_HTML: :type h1 :style {{color: 'green'}}
+Yes, it's simple.
+
+* Installation and Usage
+
+#+ATTR_HTML: :type h3
+*Installation*
+
+#+ATTR_HTML: :style {{lineHeight: 1.6}}
+  - First, you should have Emacs 25+ installed.
+  - Then, Put =ox-spectacle.el= to your Emacs's ~load-path~
+
+#+ATTR_HTML: :type h3 :style {{marginTop: '1em'}}
+*Usage*
+
+#+ATTR_HTML: :style {{lineHeight: 1.6, textShadow: '0 0 1px #666'}}
+  - Load the script in emacs with =(require 'ox-spectacle)=
+  - Export org file to PRESENTATION with key =Ctrl-C Ctrl-E s f=.
+  - Then, you can open the generated html with browser.
+
+* About Sample
+:PROPERTIES:
+:props: transition={['zoom', 'slide']}
+:END:
+
+
+*NOTE 1*
+\\
+\\
+
+This Org-File itself can be used as PRESENTATION, you can read the raw file to learn the usage of ox-spectacle.el.
+
+** Appear
+
+\\
+\\
+*NOTE 2*
+\\
+\\
+
+When browser the PRESENTATION generated, press =alt p= to see the source of current page.
+
+\\
+\\
+
+* Text Style
+:PROPERTIES:
+:divs: style={{lineHeight: 1.6}}
+:END:
+
+Text Style (Normal Text)
+
+#+ATTR_HTML: :type p
+Text Style (<p>)
+
+#+ATTR_HTML: :type span
+Text Style (<span>)
+
+#+ATTR_HTML: :type pre :style {{display: 'inline', color: 'red', marginLeft: '1em'}}
+Text Style (<pre>)
+
+/Text Style (italic)/ =Text Style (code)= +Text Style+
+
+#+ATTR_HTML: :type h4
+Text Style (Heading size={4})
+
+#+ATTR_HTML: :textColor green :font Serif Regular :weight 400 :textSize 50
+Text Style (local font)
+
+#+ATTR_HTML: :textColor darkblue :gfont Roboto Slab
+Text Style (google font)
+
+#+ATTR_HTML: :type Appear :style {{textShadow: '0 0 3px yellow', color: 'red'}}
+Text Style (Appear)
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Text Style
+  :PROPERTIES:
+  :divs: style={{lineHeight: 1.6}}
+  :END:
+
+  Text Style (Normal Text)
+
+  ,#+ATTR_HTML: :type p
+  Text Style (<p>)
+
+  ,#+ATTR_HTML: :type span
+  Text Style (<span>)
+
+  ,#+ATTR_HTML: :type pre :style {{display: 'inline', color: 'red', marginLeft: '1em'}}
+  Text Style (<pre>)
+
+  /Text Style (italic)/ =Text Style (code)= +Text Style+
+
+  ,#+ATTR_HTML: :type h4
+  Text Style (Heading size={4})
+
+  ,#+ATTR_HTML: :textColor green :font Serif Regular :weight 400 :textSize 50
+  Text Style (local font)
+
+  ,#+ATTR_HTML: :textColor darkblue :gfont Roboto Slab
+  Text Style (google font)
+
+  ,#+ATTR_HTML: :type Appear :style {{textShadow: '0 0 3px yellow', color: 'red'}}
+  Text Style (Appear)
+#+END_SRC
+
+* Links and Image
+:PROPERTIES:
+:props: bgImage='http://45.63.55.2/aaa/img/gqj-004.jpg' transition={['zoom', 'fade']}
+:END:
+
+
+#+ATTR_HTML: :style {{maxHeight: 400, borderRadius: 8, marginBottom: 30, transform: 'rotate(3deg)'}}
+http://45.63.55.2/aaa/img/gqj-001.jpg
+
+
+Nav to Google: http://www.google.com
+
+
+#+ATTR_HTML: :style {{fontSize: 30, marginTop: 30}}
+[[slide:p5][Click Here to jump to Slide 5]]
+
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Links and Image
+  :PROPERTIES:
+  :props: bgImage='http://45.63.55.2/aaa/img/gqj-004.jpg' transition={['zoom', 'fade']}
+  :END:
+
+
+  ,#+ATTR_HTML: :style {{maxHeight: 400, borderRadius: 8, marginBottom: 30, transform: 'rotate(3deg)'}}
+  http://45.63.55.2/aaa/img/gqj-001.jpg
+
+
+  Nav to Google: http://www.google.com
+
+
+  ,#+ATTR_HTML: :style {{fontSize: 30, marginTop: 30}}
+  [[slide:p5][Click Here to jump to Slide 5]]
+#+END_SRC
+
+* List Sample
+:PROPERTIES:
+:props: bgImage={imgs.m} transition={['slide', 'fade']}
+:divs: style={{display: 'flex', justifyContent: 'space-around'}}
+:END:
+
+** section
+
+*This is Unordered List:*
+
+  - Apple
+  - Flower
+  - Water
+  - Blahblah
+
+** section
+
+*This is Ordered List:*
+
+#+ATTR_HTML: :type A :style {{color: 'blue'}}
+  1. Apple
+  2. Flower
+  3. Water
+  4. Blahblah
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* List Sample
+  :PROPERTIES:
+  :props: bgImage={imgs.m} transition={['slide', 'fade']}
+  :divs: style={{display: 'flex', justifyContent: 'space-around'}}
+  :END:
+
+  ,** section
+
+  ,*This is Unordered List:*
+
+    - Apple
+    - Flower
+    - Water
+    - Blahblah
+
+  ,** section
+
+  ,*This is Ordered List:*
+
+  ,#+ATTR_HTML: :type A :style {{color: 'blue'}}
+    1. Apple
+    2. Flower
+    3. Water
+    4. Blahblah
+#+END_SRC
+
+* Table Sample
+:PROPERTIES:
+:props: bgImage={imgs.m} transition={['fade', 'zoom']}
+:END:
+
+#+ATTR_HTML: :type h5 caps :style {{marginBottom: 70}}
+Table like this
+
+#+ATTR_HTML: :style {{fontSize: '1.2em', width: 900}}
+| name  | gender | salary |
+|-------+--------+--------|
+| tttt  | female |   3333 |
+| ssss  | male   |   4444 |
+| aaap  | male   |   4234 |
+| bbbir | male   |  41144 |
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Table Sample
+  :PROPERTIES:
+  :props: bgImage={imgs.m} transition={['fade', 'zoom']}
+  :END:
+
+  ,#+ATTR_HTML: :type h5 caps :style {{marginBottom: 70}}
+  Table like this
+
+  ,#+ATTR_HTML: :style {{fontSize: '1.2em', width: 900}}
+  | name  | gender | salary |
+  |-------+--------+--------|
+  | tttt  | female |   3333 |
+  | ssss  | male   |   4444 |
+  | aaap  | male   |   4234 |
+  | bbbir | male   |  41144 |
+#+END_SRC
+
+* Code Sample
+:PROPERTIES:
+:props: bgColor='hotpink' bgDarken={0.5}
+:END:
+
+#+ATTR_HTML: :textColor white
+*Code htmlize with org mode, simple enough:*
+
+#+ATTR_HTML: :style {{fontSize: 16, marginTop: 50, padding: 30, backgroundColor: '#ffffff'}}
+#+BEGIN_SRC elisp
+  (defun org-html-latex-fragment (latex-fragment _contents info)
+    "Transcode a LATEX-FRAGMENT object from Org to HTML.
+  CONTENTS is nil.  INFO is a plist holding contextual information."
+    (let ((latex-frag (org-element-property :value latex-fragment))
+          (processing-type (plist-get info :with-latex)))
+      (cond
+       ((memq processing-type '(t mathjax))
+        (org-html-format-latex latex-frag 'mathjax info))
+       ((assq processing-type org-preview-latex-process-alist)
+        (let ((formula-link
+               (org-html-format-latex latex-frag processing-type info)))
+          (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
+            (org-html--format-image (match-string 1 formula-link) nil info))))
+       (t latex-frag))))
+#+END_SRC
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Code Sample
+  :PROPERTIES:
+  :props: bgColor='hotpink' bgDarken={0.5}
+  :END:
+
+  ,#+ATTR_HTML: :textColor white
+  ,*Code htmlize with org mode, simple enough:*
+
+  ,#+ATTR_HTML: :style {{fontSize: 16, marginTop: 50, padding: 30, backgroundColor: '#ffffff'}}
+  ,#+BEGIN_SRC elisp
+    (defun org-html-latex-fragment (latex-fragment _contents info)
+      "Transcode a LATEX-FRAGMENT object from Org to HTML.
+    CONTENTS is nil.  INFO is a plist holding contextual information."
+      (let ((latex-frag (org-element-property :value latex-fragment))
+            (processing-type (plist-get info :with-latex)))
+        (cond
+         ((memq processing-type '(t mathjax))
+          (org-html-format-latex latex-frag 'mathjax info))
+         ((assq processing-type org-preview-latex-process-alist)
+          (let ((formula-link
+                 (org-html-format-latex latex-frag processing-type info)))
+            (when (and formula-link (string-match "file:\\([^]]*\\)" formula-link))
+              (org-html--format-image (match-string 1 formula-link) nil info))))
+         (t latex-frag))))
+  ,#+END_SRC
+#+END_SRC
+
+* Quote Sample
+:PROPERTIES:
+:props: bgColor='hotpink' bgDarken={0.5} transition={['spin']}
+:divs: style={{textAlign: 'left'}}
+:END:
+
+#+ATTR_HTML: :type h5
+A famous man ever said:
+
+#+ATTR_HTML: :cite God Z :style {{lineHeight: 1.1}}
+#+BEGIN_QUOTE
+Once upon a time, there is a joke.
+
+But now, joke is not joke, it's JACK.
+#+END_QUOTE
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Quote Sample
+  :PROPERTIES:
+  :props: bgColor='hotpink' bgDarken={0.5} transition={['spin']}
+  :divs: style={{textAlign: 'left'}}
+  :END:
+
+  ,#+ATTR_HTML: :type h5
+  A famous man ever said:
+
+  ,#+ATTR_HTML: :cite God Z :style {{lineHeight: 1.1}}
+  ,#+BEGIN_QUOTE
+  Once upon a time, there is a joke.
+
+  But now, joke is not joke, it's JACK.
+  ,#+END_QUOTE
+#+END_SRC
+
+* Embeded React Code 
+:PROPERTIES:
+:props: bgImage={imgs.m} bgDarken={0.8}
+:END:
+
+#+ATTR_HTML: :style {{marginBottom: '1em', textAlign: 'left', color: 'white'}}
+*You can embeded React Code here directly:*
+
+#+BEGIN_EXPORT html
+<Appear fid="1">
+  <Heading size={3} caps fit textColor="lightskyblue">
+    Full Width
+  </Heading>
+</Appear>
+<Appear fid="2">
+  <Heading size={2} caps textColor="deepskyblue" style={{marginTop: 30}}>
+    Adjustable Darkness
+  </Heading>
+</Appear>
+<Appear fid="3">
+  <Text style={{marginTop: 50, color: 'yellow'}}>More complex page can writen with pure html.</Text>
+</Appear>
+#+END_EXPORT
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Embeded React Code 
+  :PROPERTIES:
+  :props: bgImage={imgs.m} bgDarken={0.8}
+  :END:
+
+  ,#+ATTR_HTML: :style {{marginBottom: '1em', textAlign: 'left', color: 'white'}}
+  ,*You can embeded React Code here directly:*
+
+  ,#+BEGIN_EXPORT html
+  <Appear fid="1">
+    <Heading size={3} caps fit textColor="lightskyblue">
+      Full Width
+    </Heading>
+  </Appear>
+  <Appear fid="2">
+    <Heading size={2} caps textColor="deepskyblue" style={{marginTop: 30}}>
+      Adjustable Darkness
+    </Heading>
+  </Appear>
+  <Appear fid="3">
+    <Text style={{marginTop: 50, color: 'yellow'}}>More complex page can writen with pure html.</Text>
+  </Appear>
+  ,#+END_EXPORT
+#+END_SRC
+
+* Subpages
+:PROPERTIES:
+:divs: style={{lineHeight: 1.4, textAlign: 'left'}}
+:END:
+
+#+ATTR_HTML: :type h5 :margin 0 auto 1em
+Demo of Subpages
+
+** Appear
+:PROPERTIES:
+:divs: style={{float: 'right', display: 'flex', flexFlow: 'column', padding: '1em', border: '1px solid darkred', borderRadius: 8}}
+:END:
+
+*** Title
+
+[[http://www.facebook.com][Another Appear]]
+
+*** Content
+
+- Wrapper with list
+- Complex page.
+
+** Appear
+*** Any Tag
+
+Default, headline wrapped with ~div~
+
+*** section
+
+Can wrap with other tags, e.g: =section=
+
+*** nil
+
+When set =nil=, will wrap nothing.
+
+** List
+*** Appear
+
+- Use =Appear= to switch item1
+
+*** Appear
+
+- Use ~Appear~ to switch item2
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Subpages
+  :PROPERTIES:
+  :divs: style={{lineHeight: 1.4, textAlign: 'left'}}
+  :END:
+
+  ,#+ATTR_HTML: :type h5 :margin 0 auto 1em
+  Demo of Subpages
+
+  ,** Appear
+  :PROPERTIES:
+  :divs: style={{float: 'right', display: 'flex', flexFlow: 'column', padding: '1em', border: '1px solid darkred', borderRadius: 8}}
+  :END:
+
+  ,*** Title
+
+  [[http://www.facebook.com][Another Appear]]
+
+  ,*** Content
+
+  - Wrapper with list
+  - Complex page.
+
+  ,** Appear
+  ,*** Any Tag
+
+  Default, headline wrapped with ~div~
+
+  ,*** section
+
+  Can wrap with other tags, e.g: =section=
+
+  ,*** nil
+
+  When set =nil=, will wrap nothing.
+
+  ,** List
+  ,*** Appear
+
+  - Use =Appear= to switch item1
+
+  ,*** Appear
+
+  - Use ~Appear~ to switch item2
+#+END_SRC
+
+* ComponentPlayground
+:PROPERTIES:
+:props: bgImage={imgs.m} bgDarken={0.8} transition={['fade']}
+:END:
+
+#+BEGIN_EXPORT html
+<ComponentPlayground theme="dark" />
+#+END_EXPORT
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* ComponentPlayground
+  :PROPERTIES:
+  :props: bgImage={imgs.m} bgDarken={0.8} transition={['fade']}
+  :END:
+
+  ,#+BEGIN_EXPORT html
+  <ComponentPlayground theme="dark" />
+  ,#+END_EXPORT
+#+END_SRC
+
+* Transition API
+:PROPERTIES:
+:props: transition={[ 'fade', trans1 ]} textColor='white' style={{lineHeight: 2, fontSize: '1.8em'}}
+:END:
+
+#+BEGIN_EXPORT html
+<List>
+  <Appear>
+    <ListItem>More advanced animation.</ListItem>
+  </Appear>
+  <Appear>
+    <ListItem>Define your transition function.</ListItem>
+  </Appear>
+  <Appear>
+    <ListItem>Should improve this.</ListItem>
+  </Appear>
+  <Appear>
+    <ListItem>And...</ListItem>
+  </Appear>
+</List>
+#+END_EXPORT
+
+** Notes
+
+#+ATTR_HTML: :style {noteCss}
+#+BEGIN_SRC org
+  ,* Transition API
+  :PROPERTIES:
+  :props: transition={[ 'fade', trans1 ]} textColor='white' style={{lineHeight: 2, fontSize: '1.8em'}}
+  :END:
+
+  ,#+BEGIN_EXPORT html
+  <List>
+    <Appear>
+      <ListItem>More advanced animation.</ListItem>
+    </Appear>
+    <Appear>
+p      <ListItem>Define your transition function.</ListItem>
+    </Appear>
+    <Appear>
+      <ListItem>Should improve this.</ListItem>
+    </Appear>
+    <Appear>
+      <ListItem>And...</ListItem>
+    </Appear>
+  </List>
+  ,#+END_EXPORT
+#+END_SRC
+
+* More Information
+
+I give a emacs command to show some useful informations.
+
+#+ATTR_HTML: :style {{margin: '1em'}}
+=: alt-x spectacle-help=
+
+* At Last
+
+#+ATTR_HTML: :type h2 fit :textColor red
+That's all.
+
+** And things to do?
+:PROPERTIES:
+:props: style={{textAlign: 'left', padding: '1em'}}
+:END:
+
+Todos:
+- [ ] export all in one
+- [ ] template page, header/footer etc
+- [ ] more flexible list render
+- [ ] animation improve and others.
+- [ ] Over design? Maybe. Lightweight needed? Maybe.
