@@ -583,10 +583,10 @@ p      <ListItem>Define your transition function.</ListItem>
 
 * More Information
 
-I give a emacs command to show some useful informations.
+I give a command to show some useful informations.
 
 #+ATTR_HTML: :style {{margin: '1em'}}
-=: alt-x spectacle-help=
+=: alt-x ox-spectacle-help=
 
 * At Last
 

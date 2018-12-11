@@ -1,4 +1,4 @@
-;;; ox-spectacle.el --- spectacle.js Presentation Back-End for Org Export Engine
+;;; ox-spectacle.el --- spectacle.js Presentation Back-End for Org Export Engine -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2018 imfine
 
@@ -40,37 +40,37 @@
 (org-export-define-derived-backend 'spectacle 'html
   :menu-entry
   '(?s "Export *Spectacle* to HTML"
-       ((?s "As buffer" ox-export-as-spectacle)
-	    (?f "As file" ox-export-to-spectacle)))
+       ((?s "As buffer" ox-spectacle-export-as-spectacle)
+	    (?f "As file" ox-spectacle-export-to-spectacle)))
 
   :options-alist
-  '((:html-doctype nil nil ox-spec--doctype)
-    (:html-table-data-tags nil nil ox-spec-table-data-tags)
-    (:html-table-header-tags nil nil ox-spec-table-header-tags)
-    (:pre-header "PRE_HEAD" nil ox-spec-pre-head newline)
-    (:custom-header "HEAD" nil ox-spec-custom-head newline)
-    (:pre-defined "PRED" nil ox-spec-custom-pred newline)
-    (:code-theme "CODE_THEME" nil ox-spec-default-code-theme space)
-    (:theme "THEME" nil ox-spec-default-theme space)
+  '((:html-doctype nil nil ox-spectacle--doctype)
+    (:html-table-data-tags nil nil ox-spectacle-table-data-tags)
+    (:html-table-header-tags nil nil ox-spectacle-table-header-tags)
+    (:pre-header "PRE_HEAD" nil ox-spectacle-pre-head newline)
+    (:custom-header "HEAD" nil ox-spectacle-custom-head newline)
+    (:pre-defined "PRED" nil ox-spectacle-custom-pred newline)
+    (:code-theme "CODE_THEME" nil ox-spectacle-default-code-theme space)
+    (:theme "THEME" nil ox-spectacle-default-theme space)
     (:props "PROPS" nil nil space)
-    (:anim  "ANIM" nil ox-spec-default-anim))
+    (:anim  "ANIM" nil ox-spectacle-default-anim))
 
   :translate-alist
-  '((template        . ox-spec-template)
-    (inner-template  . ox-spec-inner-template)
-    (headline        . ox-spec-headline)
-    (section         . ox-spec-section)
-    (src-block       . ox-spec-src-block)
-    (quote-block     . ox-spec-quote-block)
-    (code            . ox-spec-code)
-    (verbatim        . ox-spec-verbatim)
-    ;; (plain-list      . ox-spec-plain-list)
-    ;; (item            . ox-spec-item)
-    (table           . ox-spec-table)
-    (table-row       . ox-spec-table-row)
-    (link            . ox-spec-link)
-    (paragraph       . ox-spec-paragraph)
-    (horizontal-rule . ox-spec-horizontal-rule))
+  '((template        . ox-spectacle-template)
+    (inner-template  . ox-spectacle-inner-template)
+    (headline        . ox-spectacle-headline)
+    (section         . ox-spectacle-section)
+    (src-block       . ox-spectacle-src-block)
+    (quote-block     . ox-spectacle-quote-block)
+    (code            . ox-spectacle-code)
+    (verbatim        . ox-spectacle-verbatim)
+    ;; (plain-list      . ox-spectacle-plain-list)
+    ;; (item            . ox-spectacle-item)
+    (table           . ox-spectacle-table)
+    (table-row       . ox-spectacle-table-row)
+    (link            . ox-spectacle-link)
+    (paragraph       . ox-spectacle-paragraph)
+    (horizontal-rule . ox-spectacle-horizontal-rule))
 
   :filters-alist
   '((:filter-parse-tree . org-html-image-link-filter)
@@ -85,22 +85,22 @@
   :tag "Org Export Spectacle"
   :group 'org-export)
 
-(defcustom ox-spec-default-anim "slide"
+(defcustom ox-spectacle-default-anim "slide"
   "Default animation."
   :group 'ox-export-spectacle
   :type 'string)
 
-(defcustom ox-spec-default-theme "{ primary: '#fefefe' }"
+(defcustom ox-spectacle-default-theme "{ primary: '#fefefe' }"
   "Default theme."
   :group 'ox-export-spectacle
   :type 'string)
 
-(defcustom ox-spec-default-code-theme "{ backgroundColor: '#2a2734', color: '#9a86fd' }"
+(defcustom ox-spectacle-default-code-theme "{ backgroundColor: '#2a2734', color: '#9a86fd' }"
   "Theme for code pane."
   :group 'ox-export-spectacle
   :type 'string)
 
-(defcustom ox-spec-pre-head "
+(defcustom ox-spectacle-pre-head "
     <style>
       .org-pre-container {
           text-align: left;
@@ -138,23 +138,23 @@
           font-weight: bold;
       }
     </style>"
-    "Html head, js/css etc."
+  "Html head, js/css etc."
   :group 'ox-export-spectacle
   :type 'string)
 
-(defcustom ox-spec-custom-head ""
-  "Head append `ox-spec-custom-head'."
+(defcustom ox-spectacle-custom-head ""
+  "Head append `ox-spectacle-custom-head'."
   :group 'ox-export-spectacle
   :type 'string)
 
-(defcustom ox-spec-custom-pred ""
+(defcustom ox-spectacle-custom-pred ""
   "Scripts evel before Component return."
   :group 'ox-export-spectacle
   :type 'string)
 
 ;;; inner
 
-(defvar ox-spec--template "<!DOCTYPE html>
+(defvar ox-spectacle--template "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
     <meta charset=\"UTF-8\">
@@ -202,13 +202,13 @@
 </body>
 </html>")
 
-(defvar ox-spec-table-data-tags '("<TableItem%s>" . "</TableItem>"))
+(defvar ox-spectacle-table-data-tags '("<TableItem%s>" . "</TableItem>"))
 
-(defvar ox-spec-table-header-tags '("<TableHeaderItem scope=\"%s\"%s>" . "</TableHeaderItem>"))
+(defvar ox-spectacle-table-header-tags '("<TableHeaderItem scope=\"%s\"%s>" . "</TableHeaderItem>"))
 
-(defvar ox-spec--doctype "xhtml")
+(defvar ox-spectacle--doctype "xhtml")
 
-(defvar ox-spec--valid-tags
+(defvar ox-spectacle--valid-tags
   '("Appear" "BlockQuote" "Cite" "CodePane" "Code" "ComponentPlayground" "Deck" "Fill" "Fit" "Heading" "Image"
     "GoToAction" "Layout" "Link" "ListItem" "List" "Magic" "Markdown" "MarkdownSlides" "Notes" "Quote" "S" "Slide"
     "SlideSet" "TableBody" "TableHeader" "TableHeaderItem" "TableItem" "TableRow" "Table" "Text" "Typeface" "themes"))
@@ -217,7 +217,7 @@
 
 ;;; Transcoders
 
-(defun ox-spec-template (body info)
+(defun ox-spectacle-template (body info)
   "Return complete document string after HTML conversion.
 BODY is the transcoded contents string.  INFO is a plist
 holding export options."
@@ -232,9 +232,9 @@ holding export options."
                               (mapconcat 'identity (mapcar (lambda (s) (concat "'" s "'")) (split-string (car ps) "/")) ",")
                               (or (cadr ps) 1000))))))
          (body-ret
-          (format ox-spec--template
+          (format ox-spectacle--template
                   (plist-get info :pre-header)
-                  (ox-spec--normalize-json-to-css (plist-get info :code-theme))
+                  (ox-spectacle--normalize-json-to-css (plist-get info :code-theme))
                   (plist-get info :custom-header)
                   (plist-get info :theme)
                   (plist-get info :pre-defined)
@@ -246,13 +246,13 @@ holding export options."
                    "\n</Deck>"))))
     body-ret))
 
-(defun ox-spec-inner-template (contents info)
+(defun ox-spectacle-inner-template (contents _info)
   "Return body of document string after HTML conversion.
 CONTENTS is the transcoded contents string.  INFO is a plist
 holding export options."
   contents)
 
-(defun ox-spec-headline (headline contents info)
+(defun ox-spectacle-headline (headline contents info)
   "Transcode a HEADLINE element from Org to HTML.
 CONTENTS holds the contents of the headline.  INFO is a plist
 holding contextual information."
@@ -266,91 +266,81 @@ holding contextual information."
     (if (<= level 2)
         (let ((id (concat " id='p" (number-to-string (car (org-export-get-headline-number headline info))) "'")))
           (if divs
-              (concat "<Slide" id (ox-spec-wa props) ">\n<div" (ox-spec-wa divs) ">\n" contents "</div>\n</Slide>")
-            (concat "<Slide" id (ox-spec-wa props) ">\n" contents "\n</Slide>")))
+              (concat "<Slide" id (ox-spectacle-wa props) ">\n<div" (ox-spectacle-wa divs) ">\n" contents "</div>\n</Slide>")
+            (concat "<Slide" id (ox-spectacle-wa props) ">\n" contents "\n</Slide>")))
       (cond ((string= title "nil") contents)
             ((string= title "Appear")
-             (concat "<Appear" (ox-spec-wa props) ">\n<div" (ox-spec-wa divs) ">\n" contents "\n</div></Appear>"))
+             (concat "<Appear" (ox-spectacle-wa props) ">\n<div" (ox-spectacle-wa divs) ">\n" contents "\n</div></Appear>"))
             ((or (string-match-p "^[a-z]\\{1,7\\}[1-9]?$" title)
-                 (member title ox-spec--valid-tags))
-             (concat "<" title (ox-spec-wa props) ">\n" contents "</" title ">"))
-            (t (concat "<div" (ox-spec-wa props) (ox-spec-wa divs) ">\n" contents "</div>"))))))
+                 (member title ox-spectacle--valid-tags))
+             (concat "<" title (ox-spectacle-wa props) ">\n" contents "</" title ">"))
+            (t (concat "<div" (ox-spectacle-wa props) (ox-spectacle-wa divs) ">\n" contents "</div>"))))))
 
-(defun ox-spec-section (_section contents _info)
+(defun ox-spectacle-section (_section contents _info)
   "Transcode a SECTION element from Org to HTML.
 CONTENTS holds the contents of the section.  INFO is a plist
 holding contextual information."
   contents)
 
-(defun ox-spec-src-block (src-block _content info)
+(defun ox-spectacle-src-block (src-block _content info)
   "Transcode a SRC-BLOCK element from Org to HTML.
 CONTENTS holds the contents of the item.  INFO is a plist holding
 contextual information."
-  (let ((lang (org-element-property :language src-block))
-        (code (org-html-format-code src-block info))
+  (let ((code (org-html-format-code src-block info))
         (attributes
          (org-html--make-attribute-string
           (org-export-read-attribute :attr_html src-block))))
     (format "<div className='org-pre-container'>\n<pre className='org-pre code-theme'%s dangerouslySetInnerHTML={{__html: `%s`}}></pre>\n</div>"
-            (ox-spec-wa attributes)
+            (ox-spectacle-wa attributes)
             (replace-regexp-in-string "{" "&#123;" code))))
 
-(defun ox-spec-quote-block (quote-block contents _info)
+(defun ox-spectacle-quote-block (quote-block contents _info)
   "Transcode a QUOTE-BLOCK element from Org to HTML.
 CONTENTS holds the contents of the block.  INFO is a plist
 holding contextual information."
   (let* ((attributes (org-export-read-attribute :attr_html quote-block))
          (cite (plist-get attributes :cite))
-         (a (ox-spec-wa (org-html--make-attribute-string (ox-spec--plist-delete attributes :cite)))))
+         (a (ox-spectacle-wa (org-html--make-attribute-string (ox-spectacle--plist-delete attributes :cite)))))
     (format "<div>\n<BlockQuote>\n<Quote%s>\n%s</Quote>\n%s</BlockQuote>\n</div>"
             a contents (if cite (concat "<Cite>" cite "</Cite>\n") ""))))
 
-(defun ox-spec-code (code _contents info)
-  "Transcode CODE from Org to HTML.
-CONTENTS is nil.  INFO is a plist holding contextual
-information."
+(defun ox-spectacle-code (code _contents _info)
+  "Transcode CODE from Org to HTML. CONTENTS is nil."
   (format "<Code>%s</Code>" (org-html-encode-plain-text (org-element-property :value code))))
 
-(defun ox-spec-verbatim (verbatim _contents info)
+(defun ox-spectacle-verbatim (verbatim _contents _info)
   "Transcode VERBATIM from Org to HTML.
-CONTENTS is nil.  INFO is a plist holding contextual
-information."
+CONTENTS is nil."
   (format "<Code>%s</Code>" (org-html-encode-plain-text (org-element-property :value verbatim))))
 
-(defun ox-spec-plain-list (plain-list contents info)
+(defun ox-spectacle-plain-list (plain-list contents _info)
   "Transcode a PLAIN-LIST element from Org to HTML.
-CONTENTS is the contents of the list.  INFO is a plist holding
-contextual information."
-  (let* ((headline (org-export-get-parent-headline plain-list))
-         (level (+ (org-export-get-relative-level headline info)
-                   (1- (plist-get info :html-toplevel-hlevel))))
-         (ordered (eq (org-element-property :type plain-list) 'ordered))
+CONTENTS is the contents of the list."
+  (let* ((ordered (eq (org-element-property :type plain-list) 'ordered))
          (attributes (org-export-read-attribute :attr_html plain-list)))
     (format "<List%s %s>\n%s</List>\n"
             (if ordered " ordered" "")
             (org-html--make-attribute-string attributes)
             contents)))
 
-(defun ox-spec-item (item contents info)
-  "Transcode an ITEM element from Org to HTML.
-CONTENTS holds the contents of the item.  INFO is a plist holding
-contextual information."
+(defun ox-spectacle-item (_item contents _info)
+  "Transcode an _ITEM element from Org to HTML.
+CONTENTS holds the contents of the item."
   (concat "<ListItem>"
           (and (string-match-p "^<" contents) "\n")
           (org-trim contents)
           (and (string-match-p "^<" contents) "\n")
           "</ListItem>"))
 
-(defun ox-spec-table (table contents info)
+(defun ox-spectacle-table (table contents _info)
   "Transcode a TABLE element from Org to HTML.
-CONTENTS is the contents of the table.  INFO is a plist holding
-contextual information."
+CONTENTS is the contents of the table."
   (let ((attributes
 	     (org-html--make-attribute-string (org-export-read-attribute :attr_html table))))
     (format "\n<div>\n<Table%s>\n%s</Table>\n</div>\n"
-            (ox-spec-wa attributes) contents)))
+            (ox-spectacle-wa attributes) contents)))
 
-(defun ox-spec-table-row (table-row contents info)
+(defun ox-spectacle-table-row (table-row contents info)
   "Transcode a TABLE-ROW element from Org to HTML.
 CONTENTS is the contents of the row.  INFO is a plist used as a
 communication channel."
@@ -387,7 +377,7 @@ communication channel."
 	          (concat "\n" row-open-tag contents "\n" row-close-tag)
 	          (and end-group-p (cdr group-tags))))))
 
-(defun ox-spec-link (link desc info)
+(defun ox-spectacle-link (link desc info)
   "Transcode a LINK object from Org to HTML.
 DESC is the description part of the link, or the empty string.
 INFO is a plist holding contextual information.  See
@@ -448,7 +438,7 @@ INFO is a plist holding contextual information.  See
       (if (string= "svg" (file-name-extension path))
           (let ((attrs (org-html--make-attribute-string
 		                (org-combine-plists '(:class "org-svg") attributes-plist '(:fallback nil)))))
-            (format "\n<img src=\"%s\" alt=\"svg not support\"%s></img>\n" path (ox-spec-wa attrs)))
+            (format "\n<img src=\"%s\" alt=\"svg not support\"%s></img>\n" path (ox-spectacle-wa attrs)))
         (org-html-close-tag
          "Image"
          (org-html--make-attribute-string
@@ -485,7 +475,6 @@ INFO is a plist holding contextual information.  See
 	         (format "<Link href=\"#%s\"%s>%s</Link>" href attributes desc)))
 	      (_
 	       (let* ((ref (org-export-get-reference destination info))
-		          (org-html-standalone-image-predicate #'org-html--has-caption-p)
 		          (number (cond
 			               (desc nil)
 			               ((org-html-standalone-image-p destination info)
@@ -509,7 +498,7 @@ INFO is a plist holding contextual information.  See
      ;; No path, only description.  Try to do something useful.
      (t (format "<i>%s</i>" desc)))))
 
-(defun ox-spec-paragraph (paragraph contents info)
+(defun ox-spectacle-paragraph (paragraph contents info)
   "Transcode a PARAGRAPH element from Org to HTML.
 CONTENTS is the contents of the paragraph, as a string.  INFO is
 the plist used as a communication channel."
@@ -536,7 +525,7 @@ the plist used as a communication channel."
                                 (gfont (concat " googleFont='" gfont "'"))
                                 (t nil)))
              (attributes-remain (org-html--make-attribute-string
-                                 (ox-spec--plist-delete attributes :font :gfont :weight :type)))
+                                 (ox-spectacle--plist-delete attributes :font :gfont :weight :type)))
              (text-tag (cond ((and type (string-match "^h\\([0-9]\\)\\(.*\\)$" type))
                               (cons (format "Heading size={%s}%s"
                                             (match-string 1 type)
@@ -552,16 +541,15 @@ the plist used as a communication channel."
                              (t (cons "Text" "Text"))))
              (text (format "<%s%s%s>\n%s</%s>"
                            (car text-tag)
-                           (ox-spec-wa attributes-remain)
-                           (ox-spec-wa extra)
+                           (ox-spectacle-wa attributes-remain)
+                           (ox-spectacle-wa extra)
                            contents (cdr text-tag))))
         (if font-string
             (concat "<Typeface" font-string (if weight (format " weight={%s}" weight)) ">\n" text "\n</Typeface>\n")
           text)))))
 
-(defun ox-spec-horizontal-rule (horizontal-rule _contents info)
-  "Transcode an HORIZONTAL-RULE  object from Org to HTML.
-CONTENTS is nil.  INFO is a plist holding contextual information."
+(defun ox-spectacle-horizontal-rule (horizontal-rule _contents _info)
+  "Transcode an HORIZONTAL-RULE  object from Org to HTML. CONTENTS is nil."
   (let* ((outer-tags '(:margin :marginTop :marginBottom))
          (attributes (org-export-read-attribute :attr_html horizontal-rule))
          (divs (concat
@@ -575,15 +563,15 @@ CONTENTS is nil.  INFO is a plist holding contextual information."
                                 (format "%s: '%s'" (substring (symbol-name x) 1) (plist-get attributes x))
                               )) outer-tags)) ", ") "}}")))
     (format "<div%s><hr%s /></div>"
-            (ox-spec-wa divs)
-            (ox-spec-wa (org-html--make-attribute-string
-                         (ox-spec--plist-delete attributes outer-tags outer-tags))))))
+            (ox-spectacle-wa divs)
+            (ox-spectacle-wa (org-html--make-attribute-string
+                              (ox-spectacle--plist-delete attributes outer-tags outer-tags))))))
 
 
 
 ;;; Helper functions
 
-(defun ox-spec--normalize-css-to-json (css)
+(defun ox-spectacle--normalize-css-to-json (css)
   "Convert CSS: color: #8b2252; font-weight: bold; => { json object }."
   (let* ((case-fold-search nil)
          (css-json-inner
@@ -599,7 +587,7 @@ CONTENTS is nil.  INFO is a plist holding contextual information."
            ", ")))
     (concat "{" css-json-inner "}")))
 
-(defun ox-spec--normalize-json-to-css (json)
+(defun ox-spectacle--normalize-json-to-css (json)
   "Convert JSON: { fontColor: 'red', size: 23 } => common css string."
   (let* ((case-fold-search nil)
          (items (split-string (replace-regexp-in-string "^ *{\\|} *$" "" json) ",")))
@@ -610,7 +598,7 @@ CONTENTS is nil.  INFO is a plist holding contextual information."
                            (replace-regexp-in-string "['\"]" "" (cadr pair)))))
                items "; ")))
 
-(defun ox-spec--plist-delete (plist &rest properties)
+(defun ox-spectacle--plist-delete (plist &rest properties)
   "Delete PROPERTIES from PLIST."
   (let* (p (properties (if (listp (car properties)) (car properties) properties)))
     (while plist
@@ -619,7 +607,7 @@ CONTENTS is nil.  INFO is a plist holding contextual information."
       (setq plist (cddr plist)))
     p))
 
-(defun ox-spec-wa (attr)
+(defun ox-spectacle-wa (attr)
   "Normalize ATTR to ' xxx' style."
   (if attr
       (let ((a (org-trim attr)))
@@ -630,7 +618,7 @@ CONTENTS is nil.  INFO is a plist holding contextual information."
 
 ;;; Advice functions
 
-(defun ox-spec--make-attribute-string (attributes)
+(defun ox-spectacle--make-attribute-string (attributes)
   "Override ‘org-html--make-attribute-string’, make ATTRIBUTES a string."
   (let (output)
     (dolist (item attributes (mapconcat 'identity (nreverse output) " "))
@@ -641,17 +629,17 @@ CONTENTS is nil.  INFO is a plist holding contextual information."
                  (setcar output (format (if (string-match-p "^{.*}$" value) "%s=%s" "%s=\"%s\"")
                                         key value))))))))
 
-(defmacro ox-spec-advice (&rest body)
+(defmacro ox-spectacle-advice (&rest body)
   "Add advices to BODY."
   `(cl-letf (((symbol-function 'string-trim) 'org-trim)
-             ((symbol-function 'org-html--make-attribute-string) 'ox-spec--make-attribute-string))
+             ((symbol-function 'org-html--make-attribute-string) 'ox-spectacle--make-attribute-string))
      ,@body))
 
 
 
 ;;; End-user functions
 
-(defun ox-export-as-spectacle (&optional async subtreep visible-only body-only ext-plist)
+(defun ox-spectacle-export-as-spectacle (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to an HTML buffer.
 
 If narrowing is active in the current buffer, only export its
@@ -681,11 +669,11 @@ Export is done in a buffer named \"*Org HTML Export*\", which
 will be displayed when `org-export-show-temporary-export-buffer'
 is non-nil."
   (interactive)
-  (ox-spec-advice
+  (ox-spectacle-advice
    (org-export-to-buffer 'spectacle "*Org Spectacle Export*"
      async subtreep visible-only body-only ext-plist (lambda () (set-auto-mode t)))))
 
-(defun ox-export-to-spectacle (&optional async subtreep visible-only body-only ext-plist)
+(defun ox-spectacle-export-to-spectacle (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a HTML file.
 
 If narrowing is active in the current buffer, only export its
@@ -716,9 +704,9 @@ Return output file's name."
   (let* ((extension (concat "." (or (plist-get ext-plist :html-extension) org-html-extension "html")))
          (file (org-export-output-file-name extension subtreep))
          (org-export-coding-system 'utf-8))
-    (ox-spec-advice (org-export-to-file 'spectacle file async subtreep visible-only body-only ext-plist))))
+    (ox-spectacle-advice (org-export-to-file 'spectacle file async subtreep visible-only body-only ext-plist))))
 
-(defun ox-publish-to-html (plist filename pub-dir)
+(defun ox-spectacle-publish-to-html (plist filename pub-dir)
   "Publish an org file to HTML.
 
 FILENAME is the filename of the Org file to be published.  PLIST
@@ -726,15 +714,15 @@ is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (ox-spec-advice
+  (ox-spectacle-advice
    (org-publish-org-to 'spectacle filename
                        (concat "." (or (plist-get plist :html-extension) org-html-extension "html"))
                        plist pub-dir)))
 
-(defun spectacle-help ()
+(defun ox-spectacle-help ()
   "Options:
 
-  - #+PRE_HEAD (ox-spec-pre-css, pure css)
+  - #+PRE_HEAD (ox-spectacle-pre-css, pure css)
   - #+HEAD: (embed to html)
   - #+PRED: (run before return JSX)
   - #+THEME: { primary: \"lightgreen\", secondary: \"#222222\" },
