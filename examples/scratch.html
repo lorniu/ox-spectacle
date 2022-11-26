@@ -1,0 +1,358 @@
+<html>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+  <title>Scratch</title>
+
+<!-- MathJax Setup -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+        "HTML-CSS": { scale: 100, linebreaks: { automatic: "false" }, webFont: "TeX" },
+        SVG: {scale: 100, linebreaks: { automatic: "false" }, font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"}, MultLineWidth: "85%", TagSide: "right", TagIndent: ".8em" }
+    });
+</script>
+<script src="https://cdn.bootcdn.net/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML" async></script>
+
+<!-- scripts -->
+
+<script src='https://unpkg.com/react@18.1.0/umd/react.production.min.js'></script>
+<script src='https://unpkg.com/react-dom@18.1.0/umd/react-dom.production.min.js'></script>
+<script src='https://unpkg.com/react-is@18.1.0/umd/react-is.production.min.js'></script>
+<script src='https://unpkg.com/prop-types@15.7.2/prop-types.min.js'></script>
+<script src='https://unpkg.com/spectacle@^9/dist/spectacle.min.js'></script>
+<script src='https://unpkg.com/htm'></script>
+<script src='https://unpkg.com/recharts/umd/Recharts.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+
+<!-- extra css catch from the org file -->
+
+<style>
+.f1 { margin-left: 5em; justify-content: flex-start; flex-flow: row nowrap; }
+.f1 img { margin-right: 1em; width: 120px; transition: all 0.3s; }
+.f1c { transform: scale(1.2) }
+
+.t1 { text-align: left; font-size: 100px; margin: 1em; color: white; }
+.t2 { position: absolute; bottom: 150px; right: 150px; opacity: 0; color: silver; transition: opacity 2s; white-space: pre; }
+
+/* ease in out */
+.welcome { font-size: 25px; color: silver; opacity: 0.8; animation: kb1 3s; text-align: right; margin: -1em 1em }
+@keyframes kb1 { from { opacity: 0; } 90% { color: #fff; opacity: 1 } to { opacity: 0.8 } }
+
+/* Is there any more convenient way to custom colors or fonts */
+/* Maybe the colors and fonts are inherited from the parent element by default */
+.l1 code { font-size: 20px; color: pink; }
+
+/* Maybe more props for Image should be added. */
+@keyframes kib1 { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+.ib1 img { object-fit: fill; max-height: 550px; width: 130px; border-radius: 50%; animation: kib1 5s linear infinite; }
+
+/* for the charts */
+.ga { display: grid; grid-template: minmax(300px, 1fr) minmax(300px, 1fr) / minmax(300px, 1fr) minmax(300px, 1fr); height: 90%; transition: all 1s ease; }
+.gia { flex-flow: column; justify-content: space-around; height: 90%; padding: 10px; }
+.ci { background: linear-gradient(to right bottom, rgba(224,253,254,0.9), rgba(244,253,254,0.9)); padding: 8px 5px; }
+.gaf1 { transform: scale(2); transform-origin: 0 0; }
+.gaf2 { transform: scale(2); transform-origin: 100% 100%; }
+
+a { color: skyblue !important; text-decoration: none !important; font-size: 20px !important; }
+
+/* Is there any more convenient way to add borders to Tables? */
+table { border-collapse: collapse; }
+table, th, td { border: 1px solid; padding: 5px 15px; font-size: 12px !important; }
+</style>
+
+</head>
+
+<body>
+  <div id='root'></div>
+  <script type='module'>
+
+    /* imports */
+
+    const { Deck, Slide, SlideContext, SlideLayout, Box, FlexBox, Grid, Heading, Text, Link, Image, FullSizeImage, SpectacleLogo, UnorderedList, OrderedList, ListItem, Table, TableCell, TableRow, TableHeader, TableBody, CodePane, CodeSpan, Quote, Markdown, MarkdownSlideSet, MarkdownSlide, MarkdownPreHelper, Appear, Stepper, SpectacleTheme, SpectacleThemeOverrides, CommandBar, FullScreen, Progress, AnimatedProgress, Notes } = Spectacle;
+    const { defaultTheme, fadeTransition, slideTransition, defaultTransition, useSteps, useMousetrap, mdxComponentMap, indentNormalizer, removeNotes, isolateNotes } = Spectacle;
+    const html = htm.bind(React.createElement);
+
+    /* other components */
+
+    const MyLink = React.forwardRef((props, ref) => {
+       // TODO: location not refresh... why?
+       const id = props.id;
+       if (/\d+/.test(id)) {
+           const { skipTo } = React.useContext(Spectacle.DeckContext);
+           return html`<${Link} ref=${ref} onClick=${() => {event.preventDefault();skipTo({slideIndex: id})}} ...${props}></${Link}>`;
+       }
+       return html`<${Link} ...${props} ref=${ref}></${Link}>`;
+    });
+
+    /* default template */
+
+    let template = ({ slideNumber, numberOfSlides }) => html`
+      <${FlexBox} position='absolute' bottom=${0} right=${0} opacity=${0.3}>
+        <${Progress} size=${8} />
+        <${Text} fontSize=${15}>${slideNumber}/${numberOfSlides}</${Text}>
+      </${FlexBox}>`;
+
+    /* user scripts defined in org file */
+
+// this is not so clever... any smart way?
+const data1 = ["To be_", "To be or not to be ?", "This_", "This is a problem..."];
+const stepper1 = (v, i, act) => {
+    const t1 = dq(".t1");
+    if (t1) {
+        const images = dqa(".f1 img") ;
+        images.forEach(i => i.classList.remove("f1c"));
+        if (act) {
+            t1.innerText = v;
+            images[i].classList.add("f1c");
+            if (i == 3) { dq(".t2").style.opacity = "1"; }
+        } else {
+            t1.innerText = "-";
+            dq(".t2").style.opacity = "0";
+        }
+    }
+}
+
+const data111 = [{ name: 'a', uv: 4000, pv: 2400 },
+                 { name: 'b', uv: 3000, pv: 398 },
+                 { name: 'c', uv: 2000, pv: 3980 },
+                 { name: 'd', uv: 6000, pv: 1398 }];
+
+function x1 () {
+    new Chart(document.getElementById('myChart1'), {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{ label: '# of Balls', data: [12, 19, 3, 5, 2, 3], borderWidth: 1 }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+}
+window.addEventListener('load', () => setTimeout(x1, 0));
+
+const plst = {
+    colors: {
+        primary: "grey"
+    },
+    sizes: {
+        text: "50px"
+    }
+};
+
+const dq = document.querySelector.bind(document);
+const dqa = document.querySelectorAll.bind(document);
+
+// when actived, run fun1; when inactive run fun2
+const makeStepper = (fun1, fun2) => (v, i, act) => {
+    if (act) fun1(v, i); else { try { fun2(v, i) } catch (e) { /* console.log(e); */ } }
+};
+
+
+    /* presentation definition begin */
+
+    const Presentation = () => html`<${Deck} template=${template}>
+
+<!------ slide (1) begin ------>
+
+<${Slide} template=""><${Box} position="absolute" right="10vw" top="14vh"><p style=${{ fontSize: "100px" }}>Hi, Spectacle.</p>
+
+<p className="welcome">Welcome to Emacs's world.</p>
+</${Box}>
+</${Slide}>
+
+
+<!------ slide (2) begin ------>
+
+<${Slide} backgroundImage="radial-gradient(grey, 80%, #111, black)" backgroundOpacity=${0.3}><${UnorderedList} theme=${plst} className="l1">
+<${ListItem}>You can write native <${CodeSpan}>${`Spectacle`}</${CodeSpan}> code, you can use <${CodeSpan}>${`Org`}</${CodeSpan}> syntax, you can write what you want.</${ListItem}>
+<${ListItem}>Learn some <${CodeSpan}>${`CSS/JavaScript`}</${CodeSpan}> and <${CodeSpan}>${`ReactJS`}</${CodeSpan}> is nessesary when you want to have more fun.</${ListItem}>
+</${UnorderedList}>
+
+<${Grid} style=${{ margin: "1em 2em", gridTemplate: "auto auto minmax(100px, 1fr) / 1fr 1.5fr 300px" }}><${FlexBox} backgroundColor="darkred"><${Appear} priority=${5}><p>MaxJax Support:</p>
+
+<p>\\(f(x) = x^2 + 1\\)</p>
+ </${Appear}}></${FlexBox}>
+
+<${FlexBox} backgroundColor="darkblue" justifyContent="flex-start"><${Appear} priority=${1}>
+<${Image} style=${{ marginLeft: "15px", width: "150px" }} src="hz.jpg" alt="hz.jpg" />
+</${Appear}>
+
+<${UnorderedList} theme=${{ sizes: { text: 60 }}}>
+<${Appear} priority=${3}>
+<${ListItem}>Creativity Power</${ListItem}>
+</${Appear}>
+<${Appear} priority=${3}>
+<${ListItem}>Imagination Power</${ListItem}>
+</${Appear}>
+<${Appear} priority=${3}>
+<${ListItem}>Try it yourself</${ListItem}>
+</${Appear}>
+</${UnorderedList}>
+</${FlexBox}>
+
+<${Appear} priority=${0}><${FlexBox} flexDirection="column" alignItems="center">
+<${SpectacleLogo} />
+
+<p>Spectacle + Emacs</p>
+ </${FlexBox}}></${Appear}>
+
+<${FlexBox} backgroundColor="darkgreen"><${Appear} priority=${7}>
+<${Table} width="250px">
+<${TableHeader}>
+<${TableRow}>
+<${TableCell}>x</${TableCell}>
+<${TableCell}>y</${TableCell}>
+</${TableRow}>
+</${TableHeader}>
+
+<${TableBody}>
+<${TableRow}>
+<${TableCell}>111</${TableCell}>
+<${TableCell}>AAAAA</${TableCell}>
+</${TableRow}>
+
+<${TableRow}>
+<${TableCell}>222</${TableCell}>
+<${TableCell}>BBBBB</${TableCell}>
+</${TableRow}>
+</${TableBody}>
+</${Table}>
+</${Appear}>
+</${FlexBox}>
+
+<${FlexBox} backgroundColor="white" style=${{ gridColumn: "2 / 4"}}><${Heading} fontSize=${48}>The Nine‑Square Grid</${Heading}>
+</${FlexBox}>
+
+<${FlexBox} backgroundColor="purple"><${Appear} priority=${5}><p>\\[ \\sigma = \\sqrt{ \\frac{1}{N} \\sum_{i=1}^N (x_i -\\mu)^2} \\]</p>
+ </${Appear}}></${FlexBox}>
+
+<${FlexBox} backgroundColor="tomato"><${Appear} priority=${8}>
+<${Box} margin="15px">
+<${CodePane} language='js' showLineNumbers=${false} showLineNumbers=${true}>
+${`
+const aaa  = 444;
+const bbb = () => {
+    console.log("Hi Spectacle!");
+};
+
+`}
+</${CodePane}>
+</${Box}>
+</${Appear}>
+</${FlexBox}>
+
+<${FlexBox} backgroundColor="darkcyan" className="ib1"><${Appear} priority=${9}>
+<${Image}  src="hz.jpg" alt="hz.jpg" />
+</${Appear}>
+</${FlexBox}>
+</${Grid}>
+</${Slide}>
+
+
+<!------ slide (3) begin ------>
+
+<${Slide} backgroundImage="linear-gradient(to right, #159957, #155799)"><${Box} className="t1"><${UnorderedList}>
+<${ListItem}></${ListItem}>
+</${UnorderedList}>
+</${Box}>
+
+<${FlexBox} className="f1"><${Image} className="f1c" src="hz.jpg" alt="hz.jpg" />
+
+<${Image}  src="hz.jpg" alt="hz.jpg" />
+
+<${Image}  src="hz.jpg" alt="hz.jpg" />
+
+<${Image}  src="hz.jpg" alt="hz.jpg" />
+</${FlexBox}>
+
+<${Box} className="t2"><p>Stepper is very flexable.
+But a bit complex.
+Learn or not, your choice.</p>
+</${Box}>
+
+<${Stepper} values=${data1}>${stepper1}
+</${Stepper}>
+</${Slide}>
+
+
+<!------ slide (4) begin ------>
+
+<${Slide}><${Grid} className="ga"><${FlexBox}><${Box}><${Heading} fontSize=${40}>You can use third-party Libraries.</${Heading}>
+
+<${Heading} fontSize=${20} color="silver">Charts, Maps and others. Whatever you want.</${Heading}>
+ </${Box}}></${FlexBox}>
+
+<${Appear}><${FlexBox} className="gia">
+
+<${Link} href="https://github.com/recharts/recharts">Rechart.js</${Link}>
+
+
+<${Recharts.LineChart} width=${400} height=${200} data=${data111} className="ci">
+  <${Recharts.XAxis} />
+  <${Recharts.YAxis} />
+  <${Recharts.Line} dataKey="pv" stroke="black" strokeDasharray="5 5" />
+  <${Recharts.Line} dataKey="uv" stroke="black" />
+</${Recharts.LineChart}>
+ </${FlexBox}}></${Appear}>
+
+<${Appear}><${FlexBox} className="gia">
+<${Link} href="https://www.chartjs.org/">Chart.js</${Link}>
+
+
+<section style=${{ width: "400px" }}>
+  <canvas id="myChart1" style=${{width: "400px"}} className="ci"></canvas>
+</section>
+ </${FlexBox}}></${Appear}>
+
+<${FlexBox} className="gia" style=${{ transform: "scale(0.6)" }}><p style=${{ color: "silver", fontSize: "1.2em" }}>Declare the scripts and components, then use directly.</p>
+
+<${Box}>
+<${CodePane} language='html' showLineNumbers=${false}>
+${`
+#+EXTRA_SCRIPTS: https://unpkg.com/recharts/umd/Recharts.js
+#+EXTERN_COMPONENTS: Recharts
+
+<Recharts.LineChart width={400} height={200} data={data}>
+  <Recharts.XAxis />
+  <Recharts.YAxis />
+  <Recharts.Line dataKey="pv" stroke="black" strokeDasharray="5 5" />
+  <Recharts.Line dataKey="uv" stroke="black" />
+</Recharts.LineChart>
+
+`}
+</${CodePane}>
+</${Box}>
+</${FlexBox}>
+
+<${Stepper} values=${[2, 3]} priority=${-1}>${makeStepper(
+    (v, i) => dq(".ga").className = v == 2 ? "ga gaf2" : "ga",
+    (v, i) => dq(".ga").className = "ga gaf1"
+)}
+</${Stepper}>
+</${Grid}>
+</${Slide}>
+
+
+<!------ slide (5) begin ------>
+
+<${SlideLayout.Center}><h1>To Be Continued...</h1>
+</${SlideLayout.Center}>
+
+</${Deck}>`;
+
+    /* presentation definition finished */
+
+    ReactDOM.createRoot(document.getElementById('root')).render(html`<${Presentation}/>`);
+
+    /* presentation rendered, all finished */
+
+  </script>
+</body>
+</html>

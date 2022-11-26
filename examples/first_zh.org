@@ -1,0 +1,72 @@
+#+TITLE: 示例幻灯片
+
+* 第一个页面
+
+   这是第一个页面。
+
+   #+ATTR_HTML: :width 200 :style {{ margin: "2em" }}
+   [[https://formidable.com/open-source/spectacle/svg/formidable-logo-white.svg]]
+
+   #+ATTR_HTML: :margin {2} :width {900} :showLineNumbers {true}
+   #+begin_src html
+     <Slide>
+       <Text>我是第一个页面</Text>
+       <Image width="200"
+              style={{ margin: "2em" }}
+              src="https://.../formidable-logo-white.svg" />
+     </Slide>
+   #+end_src
+
+* 第二个页面
+
+   #+ATTR_HTML: :type Heading :fontFamily Kaiti
+   列表和动画演示
+
+   - 从前有座山，山中有座庙
+   - 庙里住个老和尚，在那讲故事
+     1. <A> 从前有座山，山中有座庙
+     2. <A color="red"> 庙里住个老和尚，在那讲故事……
+        + <A fontFamily="Kaiti"> 从前有座山……
+   - 故事讲完。谁赞成，谁反对？
+
+** <Appear>
+*** <Box position="absolute" top="0" right="0" style={{zoom: 0.6}}>
+
+   #+begin_src org
+     ,#+ATTR_HTML: :type Heading :fontFamily Kaiti
+     列表和动画演示
+
+     - 从前有座山，山中有座庙
+     - 庙里住个老和尚，在那讲故事
+       1. <A> 从前有座山，山中有座庙
+       2. <A color="red"> 庙里住个老和尚，在那讲故事……
+          + <A fontFamily="Kaiti"> 从前有座山……
+     - 故事讲完。谁赞成，谁反对？
+   #+end_src
+
+   #+ATTR_HTML: :marginTop 10px
+   #+begin_src html
+     <Slide>
+       <Heading fontFamily="Kaiti">列表和动画演示</Heading>
+       <UnorderedList>
+         <ListItem>从前有座山，山中有座庙</ListItem>
+         <ListItem>庙里住个老和尚，在那讲故事
+           <OrderedList>
+             <Appear>
+               <ListItem>从前有座山，山中有座庙</ListItem>
+             </Appear>
+             <Appear>
+               <ListItem color="red">庙里住个老和尚，在那讲故事……
+                 <UnorderedList>
+                   <Appear>
+                     <ListItem fontFamily="Kaiti">从前有座山……</ListItem>
+                   </Appear>
+                 </UnorderedList>
+               </ListItem>
+             </Appear>
+           </OrderedList>
+         </ListItem>
+         <ListItem>故事讲完。谁赞成，谁反对？</ListItem>
+       </UnorderedList>
+     </Slide>
+   #+end_src

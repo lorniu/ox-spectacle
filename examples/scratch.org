@@ -1,0 +1,308 @@
+#+TITLE: Scratch
+#+TEXT_OPTS: p
+#+EXPORT_LEVEL: 0
+
+# Turn on `ox-spectacle-minor-mode'
+
+* Welcome to Ox-Spectacle
+:PROPERTIES:
+:props: template=""
+:END:
+
+** <Box position="absolute" right="10vw" top="14vh">
+
+#+ATTR_HTML: :style {{ fontSize: "100px" }}
+Hi, Spectacle.
+
+#+ATTR_HTML: :className welcome
+Welcome to Emacs's world.
+
+* The layout and Appear
+:PROPERTIES:
+:props: backgroundImage="radial-gradient(grey, 80%, #111, black)" backgroundOpacity={0.3}
+:END:
+
+#+ATTR_HTML: :theme {plst} :className l1
+- You can write native =Spectacle= code, you can use =Org= syntax, you can write what you want.
+- Learn some =CSS/JavaScript= and =ReactJS= is nessesary when you want to have more fun.
+
+** <Grid style={{ margin: "1em 2em", gridTemplate: "auto auto minmax(100px, 1fr) / 1fr 1.5fr 300px" }}>
+*** MathJax    <FlexBox backgroundColor="darkred"><Appear priority={5}>
+
+MaxJax Support:
+
+$f(x) = x^2 + 1$
+
+*** Desc       <FlexBox backgroundColor="darkblue" justifyContent="flex-start">
+
+#+ATTR_HTML: :type 1 :style {{ marginLeft: "15px", width: "150px" }}
+[[file:hz.jpg]]
+
+#+ATTR_HTML: :theme {{ sizes: { text: 60 }}}
+- <3> Creativity Power
+- <3> Imagination Power
+- <3> Try it yourself
+
+*** Logo       <Appear priority={0}><FlexBox flexDirection="column" alignItems="center">
+
+<SpectacleLogo />
+
+Spectacle + Emacs
+
+*** Table      <FlexBox backgroundColor="darkgreen">
+
+#+ATTR_HTML: :type 7 :width 250px
+|   x | y     |
+|-----+-------|
+| 111 | AAAAA |
+| 222 | BBBBB |
+
+*** Title      <FlexBox backgroundColor="white" style={{ gridColumn: "2 / 4"}}>
+
+#+ATTR_HTML: :type Heading :fontSize {48}
+The Nine‑Square Grid
+
+*** MathJax    <FlexBox backgroundColor="purple"><Appear priority={5}>
+
+\[ \sigma = \sqrt{ \frac{1}{N} \sum_{i=1}^N (x_i -\mu)^2} \]
+
+*** Code       <FlexBox backgroundColor="tomato">
+
+#+ATTR_HTML: :type 8 :showLineNumbers {true} :margin 15px
+#+begin_src js
+  const aaa  = 444;
+  const bbb = () => {
+      console.log("Hi Spectacle!");
+  };
+#+end_src
+
+*** Image      <FlexBox backgroundColor="darkcyan" className="ib1">
+
+#+ATTR_HTML: :type 9
+[[file:hz.jpg]]
+
+* How to use the Stepper?
+:PROPERTIES:
+:props: backgroundImage="linear-gradient(to right, #159957, #155799)"
+:END:
+
+** Saying   <Box className="t1">
+
+-
+
+** Gallery  <FlexBox className="f1">
+
+  #+ATTR_HTML: :className f1c
+  [[file:hz.jpg]]
+
+  [[file:hz.jpg]]
+
+  [[file:hz.jpg]]
+
+  [[file:hz.jpg]]
+
+** Notice   <Box className="t2">
+
+  Stepper is very flexable.
+  But a bit complex.
+  Learn or not, your choice.
+   
+** -------  <Stepper values={data1}>
+
+${stepper1}
+
+#+ATTR_HTML: :type config
+#+begin_src js
+  // this is not so clever... any smart way?
+  const data1 = ["To be_", "To be or not to be ?", "This_", "This is a problem..."];
+  const stepper1 = (v, i, act) => {
+      const t1 = dq(".t1");
+      if (t1) {
+          const images = dqa(".f1 img") ;
+          images.forEach(i => i.classList.remove("f1c"));
+          if (act) {
+              t1.innerText = v;
+              images[i].classList.add("f1c");
+              if (i == 3) { dq(".t2").style.opacity = "1"; }
+          } else {
+              t1.innerText = "-";
+              dq(".t2").style.opacity = "0";
+          }
+      }
+  }
+#+end_src
+
+#+ATTR_HTML: :type config
+#+begin_src css
+  .f1 { margin-left: 5em; justify-content: flex-start; flex-flow: row nowrap; }
+  .f1 img { margin-right: 1em; width: 120px; transition: all 0.3s; }
+  .f1c { transform: scale(1.2) }
+
+  .t1 { text-align: left; font-size: 100px; margin: 1em; color: white; }
+  .t2 { position: absolute; bottom: 150px; right: 150px; opacity: 0; color: silver; transition: opacity 2s; white-space: pre; }
+#+end_src
+
+* Third-party Libraries
+** <Grid className="ga">
+*** Desc       <FlexBox><Box>
+
+#+ATTR_HTML: :type Heading :fontSize {40}
+You can use third-party Libraries.
+
+#+ATTR_HTML: :type Heading :fontSize {20} :color silver
+Charts, Maps and others. Whatever you want.
+
+*** Rechars.js <Appear><FlexBox className="gia">
+
+#+EXTRA_SCRIPTS: https://unpkg.com/recharts/umd/Recharts.js
+#+EXTERN_COMPONENTS: Recharts
+
+#+ATTR_HTML: :type config
+#+begin_src js
+  const data111 = [{ name: 'a', uv: 4000, pv: 2400 },
+                   { name: 'b', uv: 3000, pv: 398 },
+                   { name: 'c', uv: 2000, pv: 3980 },
+                   { name: 'd', uv: 6000, pv: 1398 }];
+#+end_src
+
+[[https://github.com/recharts/recharts][Rechart.js]]
+
+<Recharts.LineChart width={400} height={200} data={data111} className="ci">
+  <Recharts.XAxis />
+  <Recharts.YAxis />
+  <Recharts.Line dataKey="pv" stroke="black" strokeDasharray="5 5" />
+  <Recharts.Line dataKey="uv" stroke="black" />
+</Recharts.LineChart>
+
+*** Chart.js   <Appear><FlexBox className="gia">
+
+#+EXTRA_SCRIPTS: https://cdn.jsdelivr.net/npm/chart.js
+
+[[https://www.chartjs.org/][Chart.js]]
+
+<section style={{ width: "400px" }}>
+  <canvas id="myChart1" style={{width: "400px"}} className="ci"></canvas>
+</section>
+
+#+ATTR_HTML: :type config
+#+begin_src js
+  function x1 () {
+      new Chart(document.getElementById('myChart1'), {
+          type: 'bar',
+          data: {
+              labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+              datasets: [{ label: '# of Balls', data: [12, 19, 3, 5, 2, 3], borderWidth: 1 }]
+          },
+          options: {
+              scales: { y: { beginAtZero: true } }
+          }
+      });
+  }
+  window.addEventListener('load', () => setTimeout(x1, 0));
+#+end_src
+
+*** Code       <FlexBox className="gia" style={{ transform: "scale(0.6)" }}>
+
+#+ATTR_HTML: :style {{ color: "silver", fontSize: "1.2em" }}
+Declare the scripts and components, then use directly.
+
+#+begin_src html
+  ,#+EXTRA_SCRIPTS: https://unpkg.com/recharts/umd/Recharts.js
+  ,#+EXTERN_COMPONENTS: Recharts
+
+  <Recharts.LineChart width={400} height={200} data={data}>
+    <Recharts.XAxis />
+    <Recharts.YAxis />
+    <Recharts.Line dataKey="pv" stroke="black" strokeDasharray="5 5" />
+    <Recharts.Line dataKey="uv" stroke="black" />
+  </Recharts.LineChart>
+#+end_src
+
+*** -.-        <Stepper values={[2, 3]} priority={-1}>
+
+#+begin_export html
+  ${makeStepper(
+      (v, i) => dq(".ga").className = v == 2 ? "ga gaf2" : "ga",
+      (v, i) => dq(".ga").className = "ga gaf1"
+  )}
+#+end_export
+
+* Not finished, To Be Contined
+:PROPERTIES:
+:layout: Center
+:END:
+
+#+ATTR_HTML: :type h1
+To Be Continued...
+
+* <config>
+** Styles
+
+Styles used in slide pages:
+#+begin_src css
+  /* ease in out */
+  .welcome { font-size: 25px; color: silver; opacity: 0.8; animation: kb1 3s; text-align: right; margin: -1em 1em }
+  @keyframes kb1 { from { opacity: 0; } 90% { color: #fff; opacity: 1 } to { opacity: 0.8 } }
+
+  /* Is there any more convenient way to custom colors or fonts */
+  /* Maybe the colors and fonts are inherited from the parent element by default */
+  .l1 code { font-size: 20px; color: pink; }
+
+  /* Maybe more props for Image should be added. */
+  @keyframes kib1 { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  .ib1 img { object-fit: fill; max-height: 550px; width: 130px; border-radius: 50%; animation: kib1 5s linear infinite; }
+
+  /* for the charts */
+  .ga { display: grid; grid-template: minmax(300px, 1fr) minmax(300px, 1fr) / minmax(300px, 1fr) minmax(300px, 1fr); height: 90%; transition: all 1s ease; }
+  .gia { flex-flow: column; justify-content: space-around; height: 90%; padding: 10px; }
+  .ci { background: linear-gradient(to right bottom, rgba(224,253,254,0.9), rgba(244,253,254,0.9)); padding: 8px 5px; }
+  .gaf1 { transform: scale(2); transform-origin: 0 0; }
+  .gaf2 { transform: scale(2); transform-origin: 100% 100%; }
+#+end_src
+
+Global:
+#+begin_src css
+  a { color: skyblue !important; text-decoration: none !important; font-size: 20px !important; }
+  
+  /* Is there any more convenient way to add borders to Tables? */
+  table { border-collapse: collapse; }
+  table, th, td { border: 1px solid; padding: 5px 15px; font-size: 12px !important; }
+#+end_src
+
+** Themes
+
+#+begin_src js
+  const plst = {
+      colors: {
+          primary: "grey"
+      },
+      sizes: {
+          text: "50px"
+      }
+  };
+#+end_src
+
+** Scripts
+
+DOM helpers:
+#+begin_src js
+  const dq = document.querySelector.bind(document);
+  const dqa = document.querySelectorAll.bind(document);
+#+end_src
+
+Helper function to simplify the stepper:
+#+begin_src js
+  // when actived, run fun1; when inactive run fun2
+  const makeStepper = (fun1, fun2) => (v, i, act) => {
+      if (act) fun1(v, i); else { try { fun2(v, i) } catch (e) { /* console.log(e); */ } }
+  };
+#+end_src
+
+** Issues or ideas for the upstream Spectacle.js
+
+- [CodeSpan] =XXX= in paragraph. `fontSize` should inherited from parent element by default?
+- [Appear] can be displayed as `inline`? 
+- [Appear] Maybe a `action` prop add to Appear is nessesary. Then it would be easier to control the stepper.
+- [Link] How to jump to another slide conveniently?
+- [Code Pane] It's difficault to change dark/light/fontSize. Maybe more props should be add and more apis should be exposed?
+- [useFullScreen/useDeckState/useModes..] can these be exported so used in one-page?
