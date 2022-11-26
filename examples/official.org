@@ -1,0 +1,268 @@
+#+TITLE: The offical example rewritten with org/ox-spectacle
+#+THEME: theme1
+#+TEMPLATE: tp1
+
+#+Offical_Example_Url: https://github.com/FormidableLabs/spectacle/tree/main/examples/js
+
+* Logo
+** <FlexBox height="100%">
+
+<SpectacleLogo size={500} />
+
+** <Notes>
+
+Spectacle supports notes per slide.
+<ol>
+  <li>Notes can now be HTML markup!</li>
+  <li>Lists can make it easier to make points.</li>
+</ol>
+
+* Introduction
+** <FlexBox height="100%" flexDirection="column">
+
+#+ATTR_HTML: :type Heading :margin 0px :fontSize 150px
+✨<i>Spectacle</i> ✨
+
+#+ATTR_HTML: :type Heading :margin 0px :fontSize h2
+A ReactJS Presentation Library
+
+#+ATTR_HTML: :type Heading :margin 0px 32px :fontSize h3 :color primary
+Where you can write your decks in JSX, Markdown, or MDX!
+
+* Backgrounds and List
+:PROPERTIES:
+:props: transition={ts1} backgroundColor="tertiary" backgroundImage="url(https://github.com/FormidableLabs/dogs/blob/main/src/beau.jpg?raw=true)" backgroundOpacity={0.5}
+:END:
+
+#+ATTR_HTML: :type Heading
+Custom Backgrounds
+
+- =backgroundColor=
+- =backgroundImage=
+- =backgroundOpacity=
+- =backgroundSize=
+- =backgroundPosition=
+- =backgroundRepeat=
+
+* Animated Elements
+
+#+ATTR_HTML: :type Heading
+Animated Elements
+
+1. <A> Elements can animate in!
+2. <A> Out of order
+3. <A priority={0}> Just identify the order with the prop =priority=
+
+* Box/FlexBox/Grid
+** <FlexBox>
+
+These
+
+Text
+
+#+ATTR_HTML: :color secondary
+Items
+
+#+ATTR_HTML: :fontWeight bold
+Flex
+
+** <Grid gridTemplateColumns="1fr 2fr" gridColumnGap={15}>
+*** <Box backgroundColor="primary">
+
+#+ATTR_HTML: :color secondary
+Single-size Grid Item
+
+*** <Box backgroundColor="secondary">
+
+#+ATTR_HTML: :color primary
+Double-size Grid Item
+
+** <Grid gridTemplateColumns="1fr 1fr 1fr" gridTemplateRows="1fr 1fr 1fr" gridRowGap={1}>
+
+#+HTML: ${ renderSomeBoxes(9) }
+
+#+ATTR_HTML: :type config
+#+begin_src js
+  // Notice: react-htm syntax
+  const renderSomeBoxes = (n) =>
+        Array(n).fill('').map((_, index) => html`
+          <${FlexBox} paddingTop=${0} key=${`formidable-logo-${index}`} flex=${1}>
+            <${Image} src=${formidableLogo} width=${100} />
+          </${FlexBox}>`);
+#+end_src
+
+* Fragment1
+
+This is a slide fragment.
+
+* Fragment2
+
+This is also a slide fragment.
+
+** <Appear>
+
+This item shows up!
+
+** <Appear>
+
+This item also shows up!
+
+* CodePane
+
+#+ATTR_HTML: :showLineNumbers {true} :marginBottom {20}
+#+begin_src jsx
+  import { createClient, Provider } from 'urql';
+
+  const client = createClient({ url: 'https://0ufyz.sse.codesandbox.io' });
+
+  const App = () => (
+    <Provider value={client}>
+      <Todos />
+    </Provider>
+  );
+#+end_src
+
+#+begin_src java
+  public class NoLineNumbers {
+      public static void main(String[] args) {
+          System.out.println("Hello");
+      }
+  }
+#+end_src
+
+* Slide Embedded in Div?
+
+#+ATTR_HTML: :type Heading
+This is a slide embedded in div.
+
+#+ATTR_HTML: :type p :class my-warning
+This is not implement yet, because i don't understand what this used for.
+
+* Markdown Slides
+
+Write Slides with markdown?
+
+#+ATTR_HTML: :margin 1em 1.5em 5em 1.5em
+#+begin_src markdown
+  \`
+  # This is a Markdown Slide
+
+  - You can pass props down to all elements on the slide.
+  - Just use the \`componentProps\` prop.
+  \`
+#+end_src
+
+#+ATTR_HTML: :type p :class my-warning
+Markdown slides is not supported, I don't think it's necessary.
+
+* Grid
+** <Grid gridTemplateColumns="50% 50%" gridTemplateRows="50% 50%" height="100%">
+*** <FlexBox ...{fbc}>
+
+#+ATTR_HTML: :type Heading
+This is a 4x4 Grid
+
+*** <FlexBox ...{fbc}>
+
+#+ATTR_HTML: :textAlign center
+With all the content aligned and justified center.
+
+*** <FlexBox ...{fbc}>
+
+#+ATTR_HTML: :textAlign center
+It uses Spectacle =<Grid />= and =<FlexBox />= components.
+
+*** <FlexBox ...{fbc}>
+
+<Box width={200} height={200} backgroundColor="secondary" />
+
+* SlideLayout.List
+:PROPERTIES:
+:layout: List
+:props: title="Slide layouts" items={['Two-column', 'Lists' , 'Center', 'And more!']} animateListItems
+:END:
+
+* Logo centered with SlideLayout.Center
+:PROPERTIES:
+:layout: Center
+:END:
+
+<div class="anibox">
+  <SpectacleLogo size={100} />
+</div>
+
+#+ATTR_HTML: :type config
+#+begin_src css
+  @keyframes beat { to { transform: scale(1.4) } }
+  .anibox { animation: beat .5s infinite alternate; transform-origin: center; }
+#+end_src
+
+* <config>
+
+This is a special headline named =<config>=, put your custom code and definitions here.
+
+** <template> tp1
+
+  <FlexBox justifyContent="space-between" position="absolute" bottom={0} width={1}>
+    <Box padding="0 1em">
+      <FullScreen />
+    </Box>
+    <Box padding="1em">
+      <AnimatedProgress />
+    </Box>
+  </FlexBox>
+
+** define theme1
+
+#+begin_src js
+  const theme1 = {
+    fonts: {
+      header: '"Open Sans Condensed", Helvetica, Arial, sans-serif',
+      text: '"Open Sans Condensed", Helvetica, Arial, sans-serif'
+    }
+  };
+#+end_src
+
+** define transitions
+
+Maybe used by other slide or components.
+
+#+begin_src js
+  const ts1 = {
+      from: {
+          transform: 'scale(0.5) rotate(45deg)',
+          opacity: 0
+      },
+      enter: {
+          transform: 'scale(1) rotate(0)',
+          opacity: 1
+      },
+      leave: {
+          transform: 'scale(0.2) rotate(315deg)',
+          opacity: 0
+      }
+  }
+#+end_src
+
+** extra scripts used in the export
+
+#+begin_src js
+  const formidableLogo = 'https://avatars2.githubusercontent.com/u/5078602?s=280&v=4';
+  const fbc = { alignItems: "center", justifyContent: "center" };
+#+end_src
+
+** extra styles used in the export
+
+#+begin_src css
+  .my-warning {
+      color: orange;
+      text-align: center;
+      text-shadow: 1px 1px 5px black;
+      margin-top: 2em;
+  }
+  .my-warning::before {
+      color: red;
+      content: "WARNING: ";
+  }
+#+end_src
+

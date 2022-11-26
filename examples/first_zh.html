@@ -1,0 +1,160 @@
+<html>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+  <title>示例幻灯片</title>
+
+<!-- core scripts -->
+
+<script src='https://unpkg.com/react@18.1.0/umd/react.production.min.js'></script>
+<script src='https://unpkg.com/react-dom@18.1.0/umd/react-dom.production.min.js'></script>
+<script src='https://unpkg.com/react-is@18.1.0/umd/react-is.production.min.js'></script>
+<script src='https://unpkg.com/prop-types@15.7.2/prop-types.min.js'></script>
+<script src='https://unpkg.com/spectacle@^9/dist/spectacle.min.js'></script>
+<script src='https://unpkg.com/htm'></script>
+
+</head>
+
+<body>
+  <div id='root'></div>
+  <script type='module'>
+
+    /* imports */
+
+    const { Deck, Slide, SlideContext, SlideLayout, Box, FlexBox, Grid, Heading, Text, Link, Image, FullSizeImage, SpectacleLogo, UnorderedList, OrderedList, ListItem, Table, TableCell, TableRow, TableHeader, TableBody, CodePane, CodeSpan, Quote, Markdown, MarkdownSlideSet, MarkdownSlide, MarkdownPreHelper, Appear, Stepper, SpectacleTheme, SpectacleThemeOverrides, CommandBar, FullScreen, Progress, AnimatedProgress, Notes } = Spectacle;
+    const { defaultTheme, fadeTransition, slideTransition, defaultTransition, useSteps, useMousetrap, mdxComponentMap, indentNormalizer, removeNotes, isolateNotes } = Spectacle;
+    const html = htm.bind(React.createElement);
+
+    /* other components */
+
+    const MyLink = React.forwardRef((props, ref) => {
+       // TODO: location not refresh... why?
+       const id = props.id;
+       if (/\d+/.test(id)) {
+           const { skipTo } = React.useContext(Spectacle.DeckContext);
+           return html`<${Link} ref=${ref} onClick=${() => {event.preventDefault();skipTo({slideIndex: id})}} ...${props}></${Link}>`;
+       }
+       return html`<${Link} ...${props} ref=${ref}></${Link}>`;
+    });
+
+    /* default template */
+
+    let template = ({ slideNumber, numberOfSlides }) => html`
+      <${FlexBox} position='absolute' bottom=${0} right=${0} opacity=${0.3}>
+        <${Progress} size=${8} />
+        <${Text} fontSize=${15}>${slideNumber}/${numberOfSlides}</${Text}>
+      </${FlexBox}>`;
+
+
+    /* presentation definition begin */
+
+    const Presentation = () => html`<${Deck} template=${template}>
+
+<!------ slide (1) begin ------>
+
+<${Slide}><${Text}>这是第一个页面。</${Text}>
+
+<${Image} width="200" style=${{ margin: "2em" }} src="https://formidable.com/open-source/spectacle/svg/formidable-logo-white.svg" alt="formidable-logo-white.svg" />
+
+<${Box} margin=${2} width=${900}>
+<${CodePane} language='html' showLineNumbers=${false} showLineNumbers=${true}>
+${`
+   <Slide>
+     <Text>我是第一个页面</Text>
+     <Image width="200"
+            style={{ margin: "2em" }}
+            src="https://.../formidable-logo-white.svg" />
+   </Slide>
+
+`}
+</${CodePane}>
+</${Box}>
+</${Slide}>
+
+
+<!------ slide (2) begin ------>
+
+<${Slide}><${Heading} fontFamily="Kaiti">列表和动画演示</${Heading}>
+
+<${UnorderedList}>
+<${ListItem}>从前有座山，山中有座庙</${ListItem}>
+<${ListItem}>庙里住个老和尚，在那讲故事
+<${OrderedList}>
+<${Appear}>
+<${ListItem}>从前有座山，山中有座庙</${ListItem}>
+</${Appear}>
+<${Appear}>
+<${ListItem} color="red">庙里住个老和尚，在那讲故事……
+<${UnorderedList}>
+<${Appear}>
+<${ListItem} fontFamily="Kaiti">从前有座山……</${ListItem}>
+</${Appear}>
+</${UnorderedList}></${ListItem}>
+</${Appear}>
+</${OrderedList}></${ListItem}>
+<${ListItem}>故事讲完。谁赞成，谁反对？</${ListItem}>
+</${UnorderedList}>
+
+<${Appear}><${Box} position="absolute" top="0" right="0" style=${{zoom: 0.6}}><${Box}>
+<${CodePane} language='org' showLineNumbers=${false}>
+${`
+   #+ATTR_HTML: :type Heading :fontFamily Kaiti
+   列表和动画演示
+
+   - 从前有座山，山中有座庙
+   - 庙里住个老和尚，在那讲故事
+     1. <A> 从前有座山，山中有座庙
+     2. <A color="red"> 庙里住个老和尚，在那讲故事……
+        + <A fontFamily="Kaiti"> 从前有座山……
+   - 故事讲完。谁赞成，谁反对？
+
+`}
+</${CodePane}>
+</${Box}>
+
+<${Box} marginTop="10px">
+<${CodePane} language='html' showLineNumbers=${false}>
+${`
+   <Slide>
+     <Heading fontFamily="Kaiti">列表和动画演示</Heading>
+     <UnorderedList>
+       <ListItem>从前有座山，山中有座庙</ListItem>
+       <ListItem>庙里住个老和尚，在那讲故事
+         <OrderedList>
+           <Appear>
+             <ListItem>从前有座山，山中有座庙</ListItem>
+           </Appear>
+           <Appear>
+             <ListItem color="red">庙里住个老和尚，在那讲故事……
+               <UnorderedList>
+                 <Appear>
+                   <ListItem fontFamily="Kaiti">从前有座山……</ListItem>
+                 </Appear>
+               </UnorderedList>
+             </ListItem>
+           </Appear>
+         </OrderedList>
+       </ListItem>
+       <ListItem>故事讲完。谁赞成，谁反对？</ListItem>
+     </UnorderedList>
+   </Slide>
+
+`}
+</${CodePane}>
+</${Box}>
+</${Box}>
+</${Appear}>
+</${Slide}>
+
+</${Deck}>`;
+
+    /* presentation definition finished */
+
+    ReactDOM.createRoot(document.getElementById('root')).render(html`<${Presentation}/>`);
+
+    /* presentation rendered, all finished */
+
+  </script>
+</body>
+</html>

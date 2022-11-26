@@ -1,0 +1,72 @@
+#+TITLE: Demo Slides
+
+* The First Slide
+
+   This is the first slide.
+
+   #+ATTR_HTML: :width 200 :style {{ margin: "2em" }}
+   [[https://formidable.com/open-source/spectacle/svg/formidable-logo-white.svg]]
+
+   #+ATTR_HTML: :margin {2} :width {900} :showLineNumbers {true}
+   #+begin_src html
+     <Slide>
+       <Text>This is the first slide.</Text>
+       <Image width="200"
+              style={{ margin: "2em" }}
+              src="https://.../formidable-logo-white.svg" />
+     </Slide>
+   #+end_src
+
+* The Second Slide
+
+   #+ATTR_HTML: :type Heading :fontFamily serif
+   List And Appear
+
+   - Once, there was a river
+   - It's full of water
+     1. <A> I Lost my shoes there
+     2. <A color="red">But I washed my hair
+        + <A fontFamily="monospace"> and feet...
+   - This is the story
+
+** <Appear>
+*** <Box position="absolute" top="0" right="0" style={{zoom: 0.6}}>
+
+   #+begin_src org
+     ,#+ATTR_HTML: :type Heading :fontFamily serif
+     List And Appear
+
+     - Once, there was a river
+     - It's full of water
+       1. <A> I Lost my shoes there
+       2. <A color="red">But I washed my hair
+          + <A fontFamily="monospace"> and feet...
+     - This is the story
+   #+end_src
+
+   #+ATTR_HTML: :marginTop 10px
+   #+begin_src html
+     <Slide>
+       <Heading fontFamily="serif">List And Appear</Heading>
+       <UnorderedList>
+         <ListItem>Once, there was a river</ListItem>
+         <ListItem>It's full of water
+           <OrderedList>
+             <Appear>
+               <ListItem>I Lost my shoes there</ListItem>
+             </Appear>
+             <Appear>
+               <ListItem color="red">But I washed my hair
+                 <UnorderedList>
+                   <Appear>
+                     <ListItem fontFamily="monospace">and feet...</ListItem>
+                   </Appear>
+                 </UnorderedList>
+               </ListItem>
+             </Appear>
+           </OrderedList>
+         </ListItem>
+         <ListItem>This is the story</ListItem>
+       </UnorderedList>
+     </Slide>
+   #+end_src
