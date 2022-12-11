@@ -11,10 +11,10 @@
     MathJax.Hub.Config({
         displayAlign: "center",
         displayIndent: "0em",
-        "HTML-CSS": { scale: 100, linebreaks: { automatic: "false" }, webFont: "TeX" },
-        SVG: {scale: 100, linebreaks: { automatic: "false" }, font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"}, MultLineWidth: "85%", TagSide: "right", TagIndent: ".8em" }
+        "HTML-CSS": { scale: 1.0, linebreaks: { automatic: "%LINEBREAKS" }, webFont: "mathjax-modern" },
+        SVG: {scale: 1.0, linebreaks: { automatic: "%LINEBREAKS" }, font: "mathjax-modern"},
+        NativeMML: {scale: 1.0},
+        TeX: { equationNumbers: {autoNumber: "%AUTONUMBER"}, MultLineWidth: "85%", TagSide: "right", TagIndent: ".8em" }
     });
 </script>
 <script src="https://cdn.bootcdn.net/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML" async></script>
@@ -90,7 +90,7 @@ table, th, td { border: 1px solid; padding: 5px 15px; font-size: 12px !important
        return html`<${Link} ...${props} ref=${ref}></${Link}>`;
     });
 
-    /* default template */
+    /* template */
 
     let template = ({ slideNumber, numberOfSlides }) => html`
       <${FlexBox} position='absolute' bottom=${0} right=${0} opacity=${0.3}>
@@ -175,7 +175,7 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 <${ListItem}>Learn some <${CodeSpan}>${`CSS/JavaScript`}</${CodeSpan}> and <${CodeSpan}>${`ReactJS`}</${CodeSpan}> is nessesary when you want to have more fun.</${ListItem}>
 </${UnorderedList}>
 
-<${Grid} style=${{ margin: "1em 2em", gridTemplate: "auto auto minmax(100px, 1fr) / 1fr 1.5fr 300px" }}><${FlexBox} backgroundColor="darkred"><${Appear} priority=${5}><p>MaxJax Support:</p>
+<${Grid} style=${{ margin: "1em 2em", gridTemplate: "auto auto minmax(100px, 1fr) / 1fr 1.5fr 300px" }}><${FlexBox} backgroundColor="darkred"><${Appear} priority=${5}><p>MathJax Support:</p>
 
 <p>\\(f(x) = x^2 + 1\\)</p>
  </${Appear}}></${FlexBox}>

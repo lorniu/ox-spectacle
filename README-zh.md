@@ -368,7 +368,8 @@ Appear 使用相对频繁，因此这里提供了若干简化语法。
 * <config>
 
   #+begin_src html
-    <script src="https://unpkg.com/browse/chart.js@2.7.1/dist/Chart.bundle.min.js"></script>
+    <script src="jquery.js"></script>
+    <style rel="stylesheet" href="bootstrap.css">
   #+end_src
 ```
 
@@ -411,8 +412,9 @@ Appear 使用相对频繁，因此这里提供了若干简化语法。
 - `#+DECK_OPTS` 对幻灯片进行全局配置。这些属性将会传递给 Deck 节点
 - `#+SLIDE_OPTS` 替换顶层 headline 默认的 `<Slide>` 目标组件
 - `#+TEXT_OPTS` 替换 paragraph 默认的 `<Text>` 目标组件
+- `#+EXTRA_SCRIPTS` 其他的页面中需要使用的 script 文件，最好用这种方式引入
 - `#+EXTERN_COMPONENTS` 自定义或第三方组件，需要在这里声明之后才能正常使用
-- `#+EXPORT_LEVEL` 设定导出策略。默认为 0 正常导出。为 1 则将所有 scripts 内嵌到导出的 html 中。为 2 则将所有 images 内嵌到导出的 html 中。如果为 3 则将 scripts 和 images 都内嵌到导出的 html 中，即实现 all-in-one 式的导出
+- `#+EXPORT_LEVEL` 设定导出策略。默认为 0 正常导出。为 1 则将所有 scripts 内嵌到导出的 html 中。为 2 则将所有 images 内嵌到导出的 html 中。如果为 3 则将 scripts 和 images 都内嵌到导出的 html 中，即实现 all-in-one/self-contained 式的导出
 
 使用示例:
 ```org
@@ -431,7 +433,8 @@ Appear 使用相对频繁，因此这里提供了若干简化语法。
 #+TEXT_OPTS: Text color="grey" fontSize={30}
 # #+TEXT_OPTS: p
 
-#+EXTERN_COMPONENTS: MyDeck MyLink
+#+EXTRA_SCRIPTS: https://unpkg.com/recharts/umd/Recharts.js
+#+EXTERN_COMPONENTS: MyDeck MyLink Recharts
 
 #+EXPORT_LEVEL: 3
 ```

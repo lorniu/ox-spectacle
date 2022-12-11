@@ -380,7 +380,8 @@ Demo 4: import external scripts or styles?
 * <config>
 
   #+begin_src html
-    <script src="https://unpkg.com/browse/chart.js@2.7.1/dist/Chart.bundle.min.js"></script>
+    <script src="jquery.js"></script>
+    <style rel="stylesheet" href="bootstrap.css">
   #+end_src
 ```
 
@@ -423,8 +424,9 @@ All global configuration options:
 - `#+DECK_OPTS` options passed to Deck node as extra props
 - `#+SLIDE_OPTS` change the default `<Slide>` used for headline render
 - `#+TEXT_OPTS` change the default `<Text>` used for plain text paragraph render
+- `#+EXTRA_SCRIPTS` the other script refs used by the slides
 - `#+EXTERN_COMPONENTS` declare user/third-party components before use them
-- `#+EXPORT_LEVEL` Set export policy. Defaults 0 for normal export. If 1 then embed all scripts into the exported html. If 2 embed all images into the exported html. If >=3 embedded all scripts and images into the exported html, that is, all-in-one file
+- `#+EXPORT_LEVEL` Set export policy. Defaults 0 for normal export. If 1 then embed all scripts into the exported html. If 2 embed all images into the exported html. If >=3 embedded all scripts and images into the exported html, that is, all-in-one/self-contained.
 
 Usage example:
 ```org
@@ -443,7 +445,8 @@ Usage example:
 #+TEXT_OPTS: Text color="grey" fontSize={30}
 # #+TEXT_OPTS: p
 
-#+EXTERN_COMPONENTS: MyDeck MyLink
+#+EXTRA_SCRIPTS: https://unpkg.com/recharts/umd/Recharts.js
+#+EXTERN_COMPONENTS: MyDeck MyLink Recharts
 
 #+EXPORT_LEVEL: 3
 ```

@@ -60,7 +60,7 @@
   :menu-entry
   '(?s "Export to Spectacle.js Presentation"
        ((?S "As buffer" ox-spectacle-export-to-buffer)
-	    (?s "As html file" ox-spectacle-export-to-file)
+        (?s "As html file" ox-spectacle-export-to-file)
         (?o "As html file and open" ox-spectacle-export-to-file-and-browser)))
 
   :options-alist
@@ -105,7 +105,7 @@
 ;;; Variables
 
 (defgroup ox-spectacle nil
-  "Options for exporting Orgmode files to spectacle HTML pressentations."
+  "Options for exporting OrgMode files to spectacle HTML pressentations."
   :tag "Org Export Spectacle"
   :prefix 'ox-spectacle-
   :group 'org-export)
@@ -137,7 +137,7 @@
 (defcustom ox-spectacle-export-level 0
   "Export policy.
 0 for normal, 1 for embed scripts, 2 for embed images,
-3 for embed scripts and images."
+3 for embed all scripts and images, that is, all-in-one/self-contained."
   :type 'integer)
 
 (defcustom ox-spectacle-scripts
@@ -148,13 +148,14 @@
         "https://unpkg.com/spectacle@^9/dist/spectacle.min.js"
         "https://unpkg.com/htm")
   "Core scripts.
-All the react, react-dom, react-js, spectacle and htm are required!
+The react, react-dom, react-js, spectacle and htm are required!
 You can replace them with your CDN version or local version."
   :type '(repeat string))
 
 (defcustom ox-spectacle-extra-scripts nil
   "Other scripts you maybe used in the slides.
-You can config your-own/third-party scripts used by the slides here."
+The your-own or third-party scripts should set here to make the embeded export
+policy working. You can set this on a per-file basis using #+EXTRA_SCRIPTS:."
   :type '(repeat string))
 
 (defcustom ox-spectacle-extern-components nil
@@ -237,7 +238,7 @@ You can config your-own/third-party scripts used by the slides here."
        return html`<${Link} ...${props} ref=${ref}></${Link}>`;
     });
 
-    /* default template */
+    /* template */
 
     let template = %s;
 %s%s
@@ -262,12 +263,13 @@ You can config your-own/third-party scripts used by the slides here."
 ;;; Utils
 
 (defun ox-spectacle--export-level (info)
-  "Get the export level from INFO."
+  "Return the export level.
+Make sure the type is number. INFO is a plist holding export options."
   (let ((lv (plist-get info :export-level)))
     (if (stringp lv) (string-to-number lv) lv)))
 
 (defun ox-spectacle--fetch-content (path)
-  "Return content of PATH, that is a file or url."
+  "Return the content of PATH, that is a file or url."
   (let ((urlp (string-match-p "^\\(http\\|ftp\\)" path)))
     (condition-case err
         (with-temp-buffer
@@ -278,9 +280,10 @@ You can config your-own/third-party scripts used by the slides here."
       (error (user-error "Get content failed for %s %s" path (cdr err))))))
 
 (defun ox-spectacle--make-scripts (info &optional forcenew)
-  "Generate the scripts content.
-INFO is a plist holding export options.
-When FORCENEW is t then try to refresh the cache."
+  "Generate the <scripts> part of final html.
+If level is 1 or 3 then embeded the contents into html. Fetch the contents
+from the url or path, cache them if nessesary. FORCENEW the cache when
+it's non-nil. INFO is a plist holding export options."
   (let ((lv (ox-spectacle--export-level info))
         (scripts (append ox-spectacle-scripts (plist-get info :extra-scripts))))
     (if (or (= lv 1) (>= lv 3))
@@ -304,7 +307,7 @@ When FORCENEW is t then try to refresh the cache."
 
 (defun ox-spectacle--data-uri (path)
   "Generate the inline data used in html for PATH.
-If PATH is remote, download it."
+If PATH is a remote url, download it."
   (let* ((ext (car (split-string (file-name-extension path) "?")))
          (content (ox-spectacle--fetch-content path))
          (svgp (string-equal "svg" ext))
@@ -314,11 +317,9 @@ If PATH is remote, download it."
     (format "data:image/%s,%s" type data)))
 
 (defun ox-spectacle--extract-options (opts info &optional normed)
-  "OPTS is keyword like :deck-opts.
-Extract the value of it from INFO. The first part of the value maybe the
-tag, others are props. Split and return them as cons. Assume the component
-name is capitalized and html tags are all lower case. If NORMED non-nil
-then filter the props."
+  "Parse the value of OPTS from INFO.
+OPTS is keyword like :deck-opts, its value is consists of tags and props.
+Parse and return them as cons. If NORMED non-nil, apply the filters on props."
   (setq opts (org-export-data (plist-get info opts) info))
   (when (> (length opts) 0)
     (let (tag props (case-fold-search nil))
@@ -336,7 +337,7 @@ then filter the props."
 
 (defun ox-spectacle--available-components (&optional info)
   "All components available.
-If INFO is not nil, get those from it directly.
+Get from INFO or parse and get from the buffer.
 INFO is a plist holding contextual information."
   (let ((externals (if info (plist-get info :extern-components)
                      (save-excursion
@@ -369,7 +370,7 @@ When ELEMENT is headline and WITH-SELF is t, then add itself to the result."
        (while ,plist
          (if (memq (car ,plist) ,pps)
              (setq ,rs (plist-put ,rs (car ,plist) (cadr ,plist)))
-	       (setq ,ps (plist-put ,ps (car ,plist) (cadr ,plist))))
+           (setq ,ps (plist-put ,ps (car ,plist) (cadr ,plist))))
          (setq ,plist (cddr ,plist)))
        (setq ,plist ,ps)
        ,rs)))
@@ -382,9 +383,8 @@ When ELEMENT is headline and WITH-SELF is t, then add itself to the result."
     ""))
 
 (defun ox-spectacle--filter-image (props info)
-  "Replace all url in PROPS to inline data.
-If url is remote, download it! INFO is a plist holding
-contextual information."
+  "Replace all image url in PROPS to inline data.
+If url is remote, download it! INFO is a plist holding contextual information."
   (if (and (>= (ox-spectacle--export-level info) 2) (> (length props) 10))
       (replace-regexp-in-string
        "url(\\([^)]+\\))"
@@ -393,12 +393,11 @@ contextual information."
     props))
 
 (defun ox-spectacle--compat-props-react-htm (props)
-  "Update PROPS to make the final code complat with react-htm."
+  "Make PROPS compat with react-htm syntax, that is, add $ if nessesary."
   (replace-regexp-in-string "\\(=\\|\\.\\.\\.\\){" "\\1${" props))
 
 (defun ox-spectacle--maybe-appear (contents flags)
-  "Try to wrap CONTENTS with Appear according to FLAGS.
-FLAGS should be `A, 1, A props' style."
+  "Wrap CONTENTS with <Appear> if FLAGS is A/NUM-props style."
   (if (and flags (string-match "^\\([A0-9]\\)[ \t]*\\(.*\\)$" flags))
       (let ((priority (when-let ((s (match-string 1 flags)))
                         (if (string-equal s "A") nil s)))
@@ -437,9 +436,9 @@ FLAGS should be `A, 1, A props' style."
 ;;; Filters and Transcoders
 
 (defun ox-spectacle--init-filter (exp-plist backend)
-  "Do the extra inital things.
-EXP-PLIST is a plist containing export options.  BACKEND is the
-export back-end currently used."
+  "Do some initialization work.
+EXP-PLIST is a plist containing export options. BACKEND is the export back-end
+currently used."
   (setq ox-spectacle--extra-css nil
         ox-spectacle--extra-javascript nil
         ox-spectacle--extra-header nil
@@ -447,8 +446,7 @@ export back-end currently used."
   (org-html-infojs-install-script exp-plist backend))
 
 (defun ox-spectacle--parse-tree-filter (data _backend info)
-  "Filter the buffer tree before export.
-DATA is a parse tree. INFO is a plist."
+  "Filter the buffer tree before export. DATA is a parse tree. INFO is a plist."
   (org-export-insert-image-links data info org-html-inline-image-rules))
 
 (defun ox-spectacle--template (body info)
@@ -507,24 +505,24 @@ holding contextual information."
               (user-error "No name found on <Config/Template>")))
            ;; sections under <template>, return directly
            ((and (> level 2) (string-match-p tpl-regexp (org-element-property :raw-value (cadr headlines)))) contents)
-           ;; others, ignore. Catch src-blocks only in `ox-spectacle--src-block'
+           ;; others, ignore. Catch src-blocks under it in `ox-spectacle--src-block'
            (t "")))
       (let* ((props (ox-spectacle--wa (org-element-property :PROPS headline)))
              (type (org-element-property :TYPE headline))
              (layout (org-element-property :LAYOUT headline))
              (tag type)
              (id (mapconcat #'number-to-string (org-export-get-headline-number headline info) "_"))
-             (regexp (format "\\(%s\\)" (mapconcat #'identity (ox-spectacle--available-components info) "\\|")))
+             (regexp (format "\\(?:%s\\)" (mapconcat #'identity (ox-spectacle--available-components info) "\\|")))
              prefix inline-tag inline-props inline-prefix inline-suffix)
         ;; headline with <Component props> declaration has the highest priority
-        (when (string-match (format "<\\${\\(?:%s\\|SlideLayout\\.[a-zA-Z0-9]+\\)}\\( [^>]*\\|\\)>\\(\\(?:<.*>\\)?\\)$" regexp) title)
+        (when (string-match (format "<\\${\\(%s\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}\\( [^>]*\\|\\)>\\(\\(?:<.*>\\)?\\)$" regexp) title)
           (setq inline-tag (match-string 1 title)
                 inline-props (ox-spectacle--wa (match-string 2 title))
                 inline-prefix (match-string 3 title)) ; deal multiple Components on headline
           (with-temp-buffer
             (insert inline-prefix)
             (goto-char (point-min))
-            (while (re-search-forward "<${\\([A-Z][a-zA-Z0-9]+}\\)" nil t)
+            (while (re-search-forward "<${\\([A-Z][a-zA-Z0-9]+\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*}\\)" nil t)
               (setq inline-suffix (concat " </${" (match-string 1) "}>" inline-suffix)))))
         ;; top-most headline, should be a Slide or SlideLayout
         (when (= level 1)
@@ -568,9 +566,9 @@ contextual information."
          (props (ox-spectacle--wa (org-html--make-attribute-string props)))
          (code-props (ox-spectacle--wa (org-html--make-attribute-string code-props)))
          (root (car (ox-spectacle--get-headlines element))))
-    ;; catch config scripts and others under <config> section and :type with config
+    ;; catch scripts under <config> section and others with ':type config' above
     (if (or (and flags (string-equal-ignore-case flags "config"))
-            (string-equal-ignore-case (org-element-property :raw-value root) "<config>"))
+            (string-equal-ignore-case (or (org-element-property :raw-value root) "") "<config>"))
         (progn
           (pcase lang
             ("html" (setq ox-spectacle--extra-header
@@ -580,7 +578,7 @@ contextual information."
             ((or "js" "javascript") (setq ox-spectacle--extra-javascript
                                           (concat ox-spectacle--extra-javascript "\n" code))))
           "")
-      ;; return a CodePane normally
+      ;; others, make it a CodePane
       (let ((contents
              (format "<${Box}%s>\n<${CodePane}%s%s%s>\n${`\n%s\n`}\n</${CodePane}>\n</${Box}>"
                      props
@@ -631,7 +629,7 @@ CONTENTS is the contents of the list."
   "Transcode an _ITEM element from Org to HTML.
 CONTENTS holds the contents of the item."
   (let (len flags props (contents (or contents "")))
-    ;; <A>, <NUM>: make it Appear; pass proper props to ListItem or Appear
+    ;; <A/NUM>: make it Appear; pass proper props to ListItem or Appear
     (when (string-match "^<\\([^>$][^>]*\\)>" (car (split-string contents "\n")))
       (setq props (string-trim (match-string 1 contents)))
       (setq len (+ (length props) 2))
@@ -642,7 +640,7 @@ CONTENTS holds the contents of the item."
               (with-temp-buffer
                 (insert props)
                 (goto-char (point-min))
-                ;; seperate props, some pass to Appear, others to ListItem
+                ;; parse props, some pass to Appear, others to ListItem
                 (while (re-search-forward
                         (format "[ \t]+\\(%s\\)\\(=\\|[ \t]\\)"
                                 (mapconcat #'identity
@@ -682,26 +680,26 @@ CONTENTS is the contents of the row.  INFO is a plist used as a
 communication channel."
   (when (eq (org-element-property :type table-row) 'standard)
     (let* ((group (org-export-table-row-group table-row info))
-	       (start-group-p (org-export-table-row-starts-rowgroup-p table-row info))
-	       (end-group-p (org-export-table-row-ends-rowgroup-p table-row info))
+           (start-group-p (org-export-table-row-starts-rowgroup-p table-row info))
+           (end-group-p (org-export-table-row-ends-rowgroup-p table-row info))
            (row-open-tag "<${TableRow}>")
            (row-close-tag "</${TableRow}>")
-	       (group-tags (cond ((not (= 1 group))
+           (group-tags (cond ((not (= 1 group))
                               '("\n<${TableBody}>" . "\n</${TableBody}>"))
-	                         ((org-export-table-has-header-p (org-export-get-parent-table table-row) info)
-	                          '("<${TableHeader}>" . "\n</${TableHeader}>"))
-	                         (t
+                             ((org-export-table-has-header-p (org-export-get-parent-table table-row) info)
+                              '("<${TableHeader}>" . "\n</${TableHeader}>"))
+                             (t
                               '("\n<${TableBody}>" . "\n</${TableBody}>")))))
       (concat (and start-group-p (car group-tags))
-	          (concat "\n" row-open-tag contents "\n" row-close-tag)
-	          (and end-group-p (cdr group-tags))))))
+              (concat "\n" row-open-tag "\n" (string-trim contents) "\n" row-close-tag)
+              (and end-group-p (cdr group-tags))))))
 
 (defun ox-spectacle--table-cell (_table-cell contents info)
   "Transcode a TABLE-CELL element from Org to HTML.
 CONTENTS is nil.  INFO is a plist used as a communication
 channel."
   (setq contents (org-html-plain-text (or contents "") info))
-  (format "  \n<${TableCell}>%s</${TableCell}>" contents))
+  (format "\n<${TableCell}>%s</${TableCell}>" contents))
 
 (defun ox-spectacle--format-image (path props info)
   "Parse image link.
@@ -723,29 +721,29 @@ DESC is the description part of the link, or the empty string.
 INFO is a plist holding contextual information.  See
 `org-export-data'."
   (let* ((type (org-element-property :type link))
-	     (raw-path (org-element-property :path link))
+         (raw-path (org-element-property :path link))
          (raw-link (org-element-property :raw-link link))
-	     (desc (org-string-nw-p desc))
-	     (path (cond ((string= type "file")
-	                  (org-export-file-uri raw-path))
-	                 ((member type '("http" "https" "ftp" "mailto" "news"))
-	                  (url-encode-url (org-link-unescape (concat type ":" raw-path))))
-	                 (t raw-path)))
-	     (props (let* ((parent (org-export-get-parent-element link))
-		               (link (let ((container (org-export-get-parent link)))
-			                   (if (and (eq (org-element-type container) 'link)
+         (desc (org-string-nw-p desc))
+         (path (cond ((string= type "file")
+                      (org-export-file-uri raw-path))
+                     ((member type '("http" "https" "ftp" "mailto" "news"))
+                      (url-encode-url (org-link-unescape (concat type ":" raw-path))))
+                     (t raw-path)))
+         (props (let* ((parent (org-export-get-parent-element link))
+                       (link (let ((container (org-export-get-parent link)))
+                               (if (and (eq (org-element-type container) 'link)
                                         (org-html-inline-image-p link info))
-			                       container
-			                     link))))
-	              (and (eq (org-element-map parent 'link 'identity info t) link)
-		               (org-export-read-attribute :attr_html parent))))
-	     (sprops (ox-spectacle--wa (org-html--make-attribute-string props))))
+                                   container
+                                 link))))
+                  (and (eq (org-element-map parent 'link 'identity info t) link)
+                       (org-export-read-attribute :attr_html parent))))
+         (sprops (ox-spectacle--wa (org-html--make-attribute-string props))))
     (cond
      ;; Link type is handled by a special function.
      ((org-export-custom-protocol-maybe link desc 'html))
      ;; Image file.
      ((and (plist-get info :html-inline-images)
-	       (org-export-inline-image-p link (plist-get info :html-inline-image-rules)))
+           (org-export-inline-image-p link (plist-get info :html-inline-image-rules)))
       (ox-spectacle--format-image path props info))
      ;; Links pointing to a headline
      ((member type '("custom-id" "id"))
@@ -757,17 +755,17 @@ INFO is a plist holding contextual information.  See
                             (not (member loctype '(headline plain-text)))
                             (car (last (org-element-lineage loc 'headline))))))
           (setq destination hd))
-	    (if (equal (org-element-type destination) 'headline)
-	        (let* ((headlines (cl-remove-if
+        (if (equal (org-element-type destination) 'headline)
+            (let* ((headlines (cl-remove-if
                                ;; make sure ignore <config> section
                                (lambda (hl) (string-equal-ignore-case (org-element-property :raw-value hl) "<config>"))
                                (org-export-collect-headlines info 1)))
                    (idx (cl-position destination headlines :test #'equal))
-		           (desc (if (and (org-export-numbered-headline-p loc info) (not desc))
-		                     (mapconcat #'number-to-string (org-export-get-headline-number loc info) ".")
-		                   (or desc (org-export-data (org-element-property :title loc) info)))))
+                   (desc (if (and (org-export-numbered-headline-p loc info) (not desc))
+                             (mapconcat #'number-to-string (org-export-get-headline-number loc info) ".")
+                           (or desc (org-export-data (org-element-property :title loc) info)))))
               (format "<${MyLink} id=\"%s\">%s</${MyLink}>" idx desc))
-	      (format "<${link} href=\"#%s\"%s>%s</${Link}>" (or id path) sprops (or desc raw-link)))))
+          (format "<${link} href=\"#%s\"%s>%s</${Link}>" (or id path) sprops (or desc raw-link)))))
      ;; External link.
      (t (format "<${Link} href=\"%s\"%s>%s</${Link}>"
                 (if path (org-html-encode-plain-text path) "#") sprops
@@ -808,7 +806,7 @@ the plist used as a communication channel."
                            (concat (ox-spectacle--filter-image (buffer-substring (point-min) (point)) info)
                                    (buffer-substring (point) (point-max))))
                 tag t)))
-      ;; fallback to :text-opts if nessesary or Text by default
+      ;; fallback tag and props to :text-opts or Text
       (let* ((text-opts (ox-spectacle--extract-options :text-opts info t))
              (text-tag (car text-opts))
              (text-props (ox-spectacle--wa (cdr text-opts))))
@@ -824,7 +822,7 @@ the plist used as a communication channel."
 TEXT is the string to transcode.  INFO is a plist holding
 contextual information."
   (let ((case-fold-search nil))
-    ;; wrap Component with ${}, and add nessessary $ to its props
+    ;; wrap Component with ${}, and add nessessary $ to props
     (setq text (replace-regexp-in-string
                 (concat (format "<\\(/?\\(?:\\(?:%s\\)\\(?:\\.[A-Z][a-zA-Z0-9]+\\)?\\)\\)"
                                 (mapconcat #'identity (ox-spectacle--available-components info) "\\|"))
