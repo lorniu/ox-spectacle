@@ -29,7 +29,7 @@ Welcome to Emacs's world.
 ** <Grid style={{ margin: "1em 2em", gridTemplate: "auto auto minmax(100px, 1fr) / 1fr 1.5fr 300px" }}>
 *** MathJax    <FlexBox backgroundColor="darkred"><Appear priority={5}>
 
-MaxJax Support:
+MathJax Support:
 
 $f(x) = x^2 + 1$
 
