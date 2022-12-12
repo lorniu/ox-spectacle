@@ -365,7 +365,7 @@ When ELEMENT is headline and WITH-SELF is t, then add itself to the result."
 
 (defmacro ox-spectacle--pop-from-plist (plist &rest properties)
   "Pop the values with key of PROPERTIES in PLIST."
-  (cl-with-gensyms (ps rs pps)
+  (let ((ps (gensym)) (rs (gensym)) (pps (gensym)))
     `(let (,ps ,rs (,pps ',properties))
        (while ,plist
          (if (memq (car ,plist) ,pps)
