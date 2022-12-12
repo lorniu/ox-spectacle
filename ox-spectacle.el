@@ -507,45 +507,51 @@ holding contextual information."
            ((and (> level 2) (string-match-p tpl-regexp (org-element-property :raw-value (cadr headlines)))) contents)
            ;; others, ignore. Catch src-blocks under it in `ox-spectacle--src-block'
            (t "")))
-      (let* ((props (ox-spectacle--wa (org-element-property :PROPS headline)))
-             (type (org-element-property :TYPE headline))
-             (layout (org-element-property :LAYOUT headline))
-             (tag type)
-             (id (mapconcat #'number-to-string (org-export-get-headline-number headline info) "_"))
-             (regexp (format "\\(?:%s\\)" (mapconcat #'identity (ox-spectacle--available-components info) "\\|")))
-             prefix inline-tag inline-props inline-prefix inline-suffix)
-        ;; headline with <Component props> declaration has the highest priority
-        (when (string-match (format "<\\${\\(%s\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}\\( [^>]*\\|\\)>\\(\\(?:<.*>\\)?\\)$" regexp) title)
-          (setq inline-tag (match-string 1 title)
-                inline-props (ox-spectacle--wa (match-string 2 title))
-                inline-prefix (match-string 3 title)) ; deal multiple Components on headline
-          (with-temp-buffer
-            (insert inline-prefix)
-            (goto-char (point-min))
-            (while (re-search-forward "<${\\([A-Z][a-zA-Z0-9]+\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*}\\)" nil t)
-              (setq inline-suffix (concat " </${" (match-string 1) "}>" inline-suffix)))))
-        ;; top-most headline, should be a Slide or SlideLayout
-        (when (= level 1)
-          (let* ((slide-opts (ox-spectacle--extract-options :slide-opts info))
-                 (slide-tag (car slide-opts))
-                 (slide-props (ox-spectacle--wa (cdr slide-opts))))
-            (cond (inline-tag (setq tag inline-tag
-                                    props (concat inline-props props)))
-                  (layout (setq tag (format "SlideLayout.%s" layout)))
-                  (type (setq tag type)))
-            (unless tag (setq tag (or slide-tag "Slide")))
-            (if (= (length props) 0) (setq props slide-props)))
-          (setq prefix (format "\n<!------ slide (%s) begin ------>\n\n" id)))
-        ;; default Component used by headline
-        (unless tag
-          (if inline-tag
-              (setq tag inline-tag props (concat inline-props props))
-            (setq tag "Box")))
-        ;; normalize
-        (if (string-match-p regexp tag) (setq tag (format "${%s}" tag)))
-        (setq props (ox-spectacle--filter-image (ox-spectacle--compat-props-react-htm props) info))
-        ;; final output
-        (concat prefix "<" tag props ">" inline-prefix contents inline-suffix "</" tag ">")))))
+      (let ((layout (org-element-property :LAYOUT headline)))
+        ;; if layout is top, then headlines under it will be a slide page
+        (if (string-equal layout "top") contents
+          (let* ((props (ox-spectacle--wa (org-element-property :PROPS headline)))
+                 (type (org-element-property :TYPE headline))
+                 (tag type)
+                 (id (mapconcat #'number-to-string (org-export-get-headline-number headline info) "_"))
+                 (regexp (format "\\(?:%s\\)" (mapconcat #'identity (ox-spectacle--available-components info) "\\|")))
+                 prefix inline-tag inline-props inline-prefix inline-suffix)
+            ;; headline with <Component props> declaration has the highest priority
+            (when (string-match (format "<\\${\\(%s\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}\\( [^>]*\\|\\)>\\(\\(?:<.*>\\)?\\)$" regexp) title)
+              (let ((tt (match-string 1 title)))
+                ;; special case, <FlexBox/Box/Grid/Appear> on slide headline, wrapper
+                (if (member tt (list "FlexBox" "Box" "Grid" "Appear"))
+                    (setq inline-prefix (match-string 0 title))
+                  (setq inline-tag (match-string 1 title)
+                        inline-props (ox-spectacle--wa (match-string 2 title))
+                        inline-prefix (match-string 3 title)))) ; deal multiple Components on headline
+              (with-temp-buffer
+                (insert inline-prefix)
+                (goto-char (point-min))
+                (while (re-search-forward "<${\\([A-Z][a-zA-Z0-9]+\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*}\\)" nil t)
+                  (setq inline-suffix (concat " </${" (match-string 1) "}>" inline-suffix)))))
+            ;; top-most/under-t-layout headline, should be a Slide or SlideLayout
+            (when (or (= level 1) (string-equal (org-element-property :LAYOUT (org-element-lineage headline '(headline))) "top"))
+              (let* ((slide-opts (ox-spectacle--extract-options :slide-opts info))
+                     (slide-tag (car slide-opts))
+                     (slide-props (ox-spectacle--wa (cdr slide-opts))))
+                (cond (inline-tag (setq tag inline-tag
+                                        props (concat inline-props props)))
+                      (layout (setq tag (format "SlideLayout.%s" layout)))
+                      (type (setq tag type)))
+                (unless tag (setq tag (or slide-tag "Slide")))
+                (if (= (length props) 0) (setq props slide-props)))
+              (setq prefix (format "\n<!------ slide (%s) begin ------>\n\n" id)))
+            ;; default Component used by headline
+            (unless tag
+              (if inline-tag
+                  (setq tag inline-tag props (concat inline-props props))
+                (setq tag "Box")))
+            ;; normalize
+            (if (string-match-p regexp tag) (setq tag (format "${%s}" tag)))
+            (setq props (ox-spectacle--filter-image (ox-spectacle--compat-props-react-htm props) info))
+            ;; final output
+            (concat prefix "<" tag props ">" inline-prefix contents inline-suffix "</" tag ">")))))))
 
 (defun ox-spectacle--section (_section contents _info)
   "Transcode a SECTION element from Org to HTML.
