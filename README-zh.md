@@ -100,6 +100,7 @@
 
 顶层的 headline (level 1) 默认渲染为 `<Slide>` 组件，可使用 `PROPERTY DRAWER` 进行设定:
 - 通过 `:layout:` 可将渲染组件替换为 SlideLayout。比如 `:layout: Center` 会将当前 headline 渲染为 `<SlideLayout.Center>`
+- 当一个 headline 当设定了 `:layout: top` 那么其子 headline 才会被渲染为 `Slide`！
 - 通过 `:props:` 为组件传入属性。比如 `:props: backgroundImage="url(...)" backgroundOpacity={0.5}` 将为当前页面设定半透明的背景图片
 
 非顶层的 headline 默认会被渲染成 `<Box>` 组件，同样使用 `PROPERTY DRAWER` 进行设定:
