@@ -492,7 +492,7 @@ holding contextual information."
         (level (org-element-property :level headline))
         (headlines (ox-spectacle--get-headlines headline t)))
     ;; the special <config> section
-    (if (string-equal-ignore-case (org-element-property :raw-value (car headlines)) "<config>")
+    (if (string-equal (downcase (org-element-property :raw-value (car headlines))) "<config>")
         (let ((tpl-regexp "^<t\\(?:emplate\\|\\)>[ \t]*\\([a-zA-Z][a-zA-Z0-9]+\\)"))
           (cond
            ;; take <template> section as a template definition
@@ -567,8 +567,8 @@ contextual information."
          (code-props (ox-spectacle--wa (org-html--make-attribute-string code-props)))
          (root (car (ox-spectacle--get-headlines element))))
     ;; catch scripts under <config> section and others with ':type config' above
-    (if (or (and flags (string-equal-ignore-case flags "config"))
-            (string-equal-ignore-case (or (org-element-property :raw-value root) "") "<config>"))
+    (if (or (and flags (string-equal (downcase flags) "config"))
+            (string-equal (downcase (or (org-element-property :raw-value root) "")) "<config>"))
         (progn
           (pcase lang
             ("html" (setq ox-spectacle--extra-header
@@ -758,7 +758,7 @@ INFO is a plist holding contextual information.  See
         (if (equal (org-element-type destination) 'headline)
             (let* ((headlines (cl-remove-if
                                ;; make sure ignore <config> section
-                               (lambda (hl) (string-equal-ignore-case (org-element-property :raw-value hl) "<config>"))
+                               (lambda (hl) (string-equal (downcase (org-element-property :raw-value hl)) "<config>"))
                                (org-export-collect-headlines info 1)))
                    (idx (cl-position destination headlines :test #'equal))
                    (desc (if (and (org-export-numbered-headline-p loc info) (not desc))
