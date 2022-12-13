@@ -4,7 +4,7 @@
 
 # Turn on `ox-spectacle-minor-mode'
 
-* Welcome to Ox-Spectacle
+* Welcome
 :PROPERTIES:
 :props: template=""
 :END:
@@ -26,7 +26,7 @@ Welcome to Emacs's world.
 - You can write native =Spectacle= code, you can use =Org= syntax, you can write what you want.
 - Learn some =CSS/JavaScript= and =ReactJS= is nessesary when you want to have more fun.
 
-** <Grid style={{ margin: "1em 2em", gridTemplate: "auto auto minmax(100px, 1fr) / 1fr 1.5fr 300px" }}>
+** Nine-Grids <Grid className="ng1">
 *** MathJax    <FlexBox backgroundColor="darkred"><Appear priority={5}>
 
 MathJax Support:
@@ -86,11 +86,11 @@ The Nine‑Square Grid
 :props: backgroundImage="linear-gradient(to right, #159957, #155799)"
 :END:
 
-** Saying   <Box className="t1">
+** Saying     <Box className="t1">
 
 -
 
-** Gallery  <FlexBox className="f1">
+** Gallery    <FlexBox className="f1">
 
   #+ATTR_HTML: :className f1c
   [[file:hz.jpg]]
@@ -101,13 +101,13 @@ The Nine‑Square Grid
 
   [[file:hz.jpg]]
 
-** Notice   <Box className="t2">
+** Notice     <Box className="t2">
 
   Stepper is very flexable.
   But a bit complex.
   Learn or not, your choice.
    
-** -------  <Stepper values={data1}>
+** -------    <Stepper values={data1}>
 
 ${stepper1}
 
@@ -142,9 +142,8 @@ ${stepper1}
   .t2 { position: absolute; bottom: 150px; right: 150px; opacity: 0; color: silver; transition: opacity 2s; white-space: pre; }
 #+end_src
 
-* Third-party Libraries
-** <Grid className="ga">
-*** Desc       <FlexBox><Box>
+* Third-party Libraries <Grid className="ga">
+** Desc       <FlexBox><Box>
 
 #+ATTR_HTML: :type Heading :fontSize {40}
 You can use third-party Libraries.
@@ -152,7 +151,7 @@ You can use third-party Libraries.
 #+ATTR_HTML: :type Heading :fontSize {20} :color silver
 Charts, Maps and others. Whatever you want.
 
-*** Rechars.js <Appear><FlexBox className="gia">
+** Rechars.js <Appear><FlexBox className="gia">
 
 #+EXTRA_SCRIPTS: https://unpkg.com/recharts/umd/Recharts.js
 #+EXTERN_COMPONENTS: Recharts
@@ -174,7 +173,7 @@ Charts, Maps and others. Whatever you want.
   <Recharts.Line dataKey="uv" stroke="black" />
 </Recharts.LineChart>
 
-*** Chart.js   <Appear><FlexBox className="gia">
+** Chart.js   <Appear><FlexBox className="gia">
 
 #+EXTRA_SCRIPTS: https://cdn.jsdelivr.net/npm/chart.js
 
@@ -201,7 +200,7 @@ Charts, Maps and others. Whatever you want.
   window.addEventListener('load', () => setTimeout(x1, 0));
 #+end_src
 
-*** Code       <FlexBox className="gia" style={{ transform: "scale(0.6)" }}>
+** Code       <FlexBox className="gia" style={{ transform: "scale(0.6)" }}>
 
 #+ATTR_HTML: :style {{ color: "silver", fontSize: "1.2em" }}
 Declare the scripts and components, then use directly.
@@ -218,7 +217,7 @@ Declare the scripts and components, then use directly.
   </Recharts.LineChart>
 #+end_src
 
-*** -.-        <Stepper values={[2, 3]} priority={-1}>
+** -.-        <Stepper values={[2, 3]} priority={-1}>
 
 #+begin_export html
   ${makeStepper(
@@ -247,6 +246,9 @@ Styles used in slide pages:
   /* Is there any more convenient way to custom colors or fonts */
   /* Maybe the colors and fonts are inherited from the parent element by default */
   .l1 code { font-size: 20px; color: pink; }
+
+  /* Nine-grids layout */
+  .ng1 { margin: 1em 2em; grid-template: auto auto minmax(200px, 1fr) / 1fr 1.5fr 300px }
 
   /* Maybe more props for Image should be added. */
   @keyframes kib1 { from { transform: rotate(0); } to { transform: rotate(360deg); } }

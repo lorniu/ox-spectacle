@@ -517,12 +517,13 @@ holding contextual information."
                  (tag type)
                  (id (mapconcat #'number-to-string (org-export-get-headline-number headline info) "_"))
                  (regexp (format "\\(?:%s\\)" (mapconcat #'identity (ox-spectacle--available-components info) "\\|")))
+                 (slide-headline-p (or (= level 1) (string-equal (org-element-property :LAYOUT (org-element-lineage headline '(headline))) "top")))
                  prefix inline-tag inline-props inline-prefix inline-suffix)
             ;; headline with <Component props> declaration has the highest priority
             (when (string-match (format "<\\${\\(%s\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}\\( [^>]*\\|\\)>\\(\\(?:<.*>\\)?\\)$" regexp) title)
               (let ((tt (match-string 1 title)))
                 ;; special case, <FlexBox/Box/Grid/Appear> on slide headline, wrapper
-                (if (member tt (list "FlexBox" "Box" "Grid" "Appear"))
+                (if (and slide-headline-p (member tt (list "FlexBox" "Box" "Grid" "Appear")))
                     (setq inline-prefix (match-string 0 title))
                   (setq inline-tag (match-string 1 title)
                         inline-props (ox-spectacle--wa (match-string 2 title))
@@ -530,10 +531,10 @@ holding contextual information."
               (with-temp-buffer
                 (insert inline-prefix)
                 (goto-char (point-min))
-                (while (re-search-forward "<${\\([A-Z][a-zA-Z0-9]+\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*}\\)" nil t)
+                (while (re-search-forward "<${\\([A-Z][a-zA-Z0-9]+\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}" nil t)
                   (setq inline-suffix (concat " </${" (match-string 1) "}>" inline-suffix)))))
             ;; top-most/under-t-layout headline, should be a Slide or SlideLayout
-            (when (or (= level 1) (string-equal (org-element-property :LAYOUT (org-element-lineage headline '(headline))) "top"))
+            (when slide-headline-p
               (let* ((slide-opts (ox-spectacle--extract-options :slide-opts info))
                      (slide-tag (car slide-opts))
                      (slide-props (ox-spectacle--wa (cdr slide-opts))))

@@ -48,6 +48,9 @@
 /* Maybe the colors and fonts are inherited from the parent element by default */
 .l1 code { font-size: 20px; color: pink; }
 
+/* Nine-grids layout */
+.ng1 { margin: 1em 2em; grid-template: auto auto minmax(200px, 1fr) / 1fr 1.5fr 300px }
+
 /* Maybe more props for Image should be added. */
 @keyframes kib1 { from { transform: rotate(0); } to { transform: rotate(360deg); } }
 .ib1 img { object-fit: fill; max-height: 550px; width: 130px; border-radius: 50%; animation: kib1 5s linear infinite; }
@@ -175,10 +178,10 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 <${ListItem}>Learn some <${CodeSpan}>${`CSS/JavaScript`}</${CodeSpan}> and <${CodeSpan}>${`ReactJS`}</${CodeSpan}> is nessesary when you want to have more fun.</${ListItem}>
 </${UnorderedList}>
 
-<${Grid} style=${{ margin: "1em 2em", gridTemplate: "auto auto minmax(100px, 1fr) / 1fr 1.5fr 300px" }}><${FlexBox} backgroundColor="darkred"><${Appear} priority=${5}><p>MathJax Support:</p>
+<${Grid} className="ng1"><${FlexBox} backgroundColor="darkred"><${Appear} priority=${5}><p>MathJax Support:</p>
 
 <p>\\(f(x) = x^2 + 1\\)</p>
- </${Appear}}></${FlexBox}>
+ </${Appear}></${FlexBox}>
 
 <${FlexBox} backgroundColor="darkblue" justifyContent="flex-start"><${Appear} priority=${1}>
 <${Image} style=${{ marginLeft: "15px", width: "150px" }} src="hz.jpg" alt="hz.jpg" />
@@ -201,7 +204,7 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 <${SpectacleLogo} />
 
 <p>Spectacle + Emacs</p>
- </${FlexBox}}></${Appear}>
+ </${FlexBox}></${Appear}>
 
 <${FlexBox} backgroundColor="darkgreen"><${Appear} priority=${7}>
 <${Table} width="250px">
@@ -231,7 +234,7 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 </${FlexBox}>
 
 <${FlexBox} backgroundColor="purple"><${Appear} priority=${5}><p>\\[ \\sigma = \\sqrt{ \\frac{1}{N} \\sum_{i=1}^N (x_i -\\mu)^2} \\]</p>
- </${Appear}}></${FlexBox}>
+ </${Appear}></${FlexBox}>
 
 <${FlexBox} backgroundColor="tomato"><${Appear} priority=${8}>
 <${Box} margin="15px">
@@ -287,7 +290,7 @@ Learn or not, your choice.</p>
 <${Slide}><${Grid} className="ga"><${FlexBox}><${Box}><${Heading} fontSize=${40}>You can use third-party Libraries.</${Heading}>
 
 <${Heading} fontSize=${20} color="silver">Charts, Maps and others. Whatever you want.</${Heading}>
- </${Box}}></${FlexBox}>
+ </${Box}></${FlexBox}>
 
 <${Appear}><${FlexBox} className="gia">
 
@@ -300,7 +303,7 @@ Learn or not, your choice.</p>
   <${Recharts.Line} dataKey="pv" stroke="black" strokeDasharray="5 5" />
   <${Recharts.Line} dataKey="uv" stroke="black" />
 </${Recharts.LineChart}>
- </${FlexBox}}></${Appear}>
+ </${FlexBox}></${Appear}>
 
 <${Appear}><${FlexBox} className="gia">
 <${Link} href="https://www.chartjs.org/">Chart.js</${Link}>
@@ -309,11 +312,10 @@ Learn or not, your choice.</p>
 <section style=${{ width: "400px" }}>
   <canvas id="myChart1" style=${{width: "400px"}} className="ci"></canvas>
 </section>
- </${FlexBox}}></${Appear}>
+ </${FlexBox}></${Appear}>
 
 <${FlexBox} className="gia" style=${{ transform: "scale(0.6)" }}><p style=${{ color: "silver", fontSize: "1.2em" }}>Declare the scripts and components, then use directly.</p>
 
-<${Box}>
 <${CodePane} language='html' showLineNumbers=${false}>
 ${`
 #+EXTRA_SCRIPTS: https://unpkg.com/recharts/umd/Recharts.js
@@ -328,7 +330,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${FlexBox}>
 
 <${Stepper} values=${[2, 3]} priority=${-1}>${makeStepper(
@@ -336,8 +337,7 @@ ${`
     (v, i) => dq(".ga").className = "ga gaf1"
 )}
 </${Stepper}>
-</${Grid}>
-</${Slide}>
+ </${Grid}></${Slide}>
 
 
 <!------ slide (5) begin ------>
