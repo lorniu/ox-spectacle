@@ -5,7 +5,7 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
   <title>The offical example rewritten with org/ox-spectacle</title>
 
-<!-- core scripts -->
+<!-- scripts -->
 
 <script src='https://unpkg.com/react@18.1.0/umd/react.production.min.js'></script>
 <script src='https://unpkg.com/react-dom@18.1.0/umd/react-dom.production.min.js'></script>
@@ -56,7 +56,7 @@
        return html`<${Link} ...${props} ref=${ref}></${Link}>`;
     });
 
-    /* default template */
+    /* template */
 
     let template = ({ slideNumber, numberOfSlides }) => html`
       <${FlexBox} position='absolute' bottom=${0} right=${0} opacity=${0.3}>
@@ -67,14 +67,15 @@
     /* user templates defined in org file */
 
 let tp1 = ({ slideNumber, numberOfSlides }) => html`
+
 <${FlexBox} justifyContent="space-between" position="absolute" bottom=${0} width=${1}>
   <${Box} padding="0 1em">
     <${FullScreen} />
-  </Box>
+  </${Box}>
   <${Box} padding="1em">
     <${AnimatedProgress} />
-  </Box>
-</FlexBox>
+  </${Box}>
+</${FlexBox}>
 `;
 
     /* user scripts defined in org file */
@@ -109,6 +110,7 @@ const ts1 = {
 }
 
 const formidableLogo = 'https://avatars2.githubusercontent.com/u/5078602?s=280&v=4';
+const fba = { gridTemplateColumns: "50% 50%", gridTemplateRows: "50% 50%", height: "100%" };
 const fbc = { alignItems: "center", justifyContent: "center" };
 
 
@@ -118,7 +120,8 @@ const fbc = { alignItems: "center", justifyContent: "center" };
 
 <!------ slide (1) begin ------>
 
-<${Slide}><${FlexBox} height="100%"><${SpectacleLogo} size=${500} />
+<${Slide}><${FlexBox} height="100%">
+<${SpectacleLogo} size=${500} />
 </${FlexBox}>
 
 <${Notes}><${Text}>Spectacle supports notes per slide.
@@ -234,7 +237,6 @@ const App = () => (
 </${CodePane}>
 </${Box}>
 
-<${Box}>
 <${CodePane} language='java' showLineNumbers=${false}>
 ${`
 public class NoLineNumbers {
@@ -245,7 +247,6 @@ public class NoLineNumbers {
 
 `}
 </${CodePane}>
-</${Box}>
 </${Slide}>
 
 
@@ -281,7 +282,7 @@ ${`
 
 <!------ slide (11) begin ------>
 
-<${Slide}><${Grid} gridTemplateColumns="50% 50%" gridTemplateRows="50% 50%" height="100%"><${FlexBox} ...${fbc}><${Heading}>This is a 4x4 Grid</${Heading}>
+<${Slide}><${Grid} ...${fba}><${FlexBox} ...${fbc}><${Heading}>This is a 4x4 Grid</${Heading}>
 </${FlexBox}>
 
 <${FlexBox} ...${fbc}><${Text} textAlign="center">With all the content aligned and justified center.</${Text}>
@@ -290,10 +291,10 @@ ${`
 <${FlexBox} ...${fbc}><${Text} textAlign="center">It uses Spectacle <${CodeSpan}>${`<Grid />`}</${CodeSpan}> and <${CodeSpan}>${`<FlexBox />`}</${CodeSpan}> components.</${Text}>
 </${FlexBox}>
 
-<${FlexBox} ...${fbc}><${Box} width=${200} height=${200} backgroundColor="secondary" />
+<${FlexBox} ...${fbc}>
+<${Box} width=${200} height=${200} backgroundColor="secondary" />
 </${FlexBox}>
-</${Grid}>
-</${Slide}>
+ </${Grid}></${Slide}>
 
 
 <!------ slide (12) begin ------>
@@ -303,7 +304,8 @@ ${`
 
 <!------ slide (13) begin ------>
 
-<${SlideLayout.Center}><div class="anibox">
+<${SlideLayout.Center}>
+<div class="anibox">
   <${SpectacleLogo} size=${100} />
 </div>
 </${SlideLayout.Center}>

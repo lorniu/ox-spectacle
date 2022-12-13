@@ -155,24 +155,23 @@ Write Slides with markdown?
 #+ATTR_HTML: :type p :class my-warning
 Markdown slides is not supported, I don't think it's necessary.
 
-* Grid
-** <Grid gridTemplateColumns="50% 50%" gridTemplateRows="50% 50%" height="100%">
-*** <FlexBox ...{fbc}>
+* Grid Layout <Grid ...{fba}>
+** <FlexBox ...{fbc}>
 
 #+ATTR_HTML: :type Heading
 This is a 4x4 Grid
 
-*** <FlexBox ...{fbc}>
+** <FlexBox ...{fbc}>
 
 #+ATTR_HTML: :textAlign center
 With all the content aligned and justified center.
 
-*** <FlexBox ...{fbc}>
+** <FlexBox ...{fbc}>
 
 #+ATTR_HTML: :textAlign center
 It uses Spectacle =<Grid />= and =<FlexBox />= components.
 
-*** <FlexBox ...{fbc}>
+** <FlexBox ...{fbc}>
 
 <Box width={200} height={200} backgroundColor="secondary" />
 
@@ -248,6 +247,7 @@ Maybe used by other slide or components.
 
 #+begin_src js
   const formidableLogo = 'https://avatars2.githubusercontent.com/u/5078602?s=280&v=4';
+  const fba = { gridTemplateColumns: "50% 50%", gridTemplateRows: "50% 50%", height: "100%" };
   const fbc = { alignItems: "center", justifyContent: "center" };
 #+end_src
 
