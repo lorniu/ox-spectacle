@@ -147,8 +147,7 @@ Where you can write your decks in JSX, Markdown, or MDX!
 ** <ViewSource>
 
 #+begin_src org
-  ,* Introduction
-  ,** <FlexBox height="100%" flexDirection="column">
+  ,* Introduction <FlexBox height="100%" flexDirection="column">
 
     ,#+ATTR_HTML: :type Heading :margin 0px :fontSize 150px
     ✨<i>Spectacle</i> ✨
@@ -463,24 +462,23 @@ It uses Spectacle =<Grid />= and =<FlexBox />= components.
 ** <ViewSource>
 
 #+begin_src org
-  ,* Grid
-  ,** <Grid gridTemplateColumns="50% 50%" gridTemplateRows="50% 50%" height="100%">
-  ,*** <FlexBox ...{fbc}>
+  ,* <Grid ...{fba}>
+  ,** <FlexBox ...{fbc}>
 
     ,#+ATTR_HTML: :type Heading
     This is a 4x4 Grid
 
-  ,*** <FlexBox ...{fbc}>
+  ,** <FlexBox ...{fbc}>
 
     ,#+ATTR_HTML: :textAlign center
     With all the content aligned and justified center.
 
-  ,*** <FlexBox ...{fbc}>
+  ,** <FlexBox ...{fbc}>
 
     ,#+ATTR_HTML: :textAlign center
     It uses Spectacle =<Grid />= and =<FlexBox />= components.
 
-  ,*** <FlexBox ...{fbc}>
+  ,** <FlexBox ...{fbc}>
 
     <Box width={200} height={200} backgroundColor="secondary" />
 #+end_src
