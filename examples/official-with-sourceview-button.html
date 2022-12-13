@@ -5,7 +5,7 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
   <title>The offical example rewritten with org/ox-spectacle</title>
 
-<!-- core scripts -->
+<!-- scripts -->
 
 <script src='https://unpkg.com/react@18.1.0/umd/react.production.min.js'></script>
 <script src='https://unpkg.com/react-dom@18.1.0/umd/react-dom.production.min.js'></script>
@@ -60,7 +60,7 @@
        return html`<${Link} ...${props} ref=${ref}></${Link}>`;
     });
 
-    /* default template */
+    /* template */
 
     let template = ({ slideNumber, numberOfSlides }) => html`
       <${FlexBox} position='absolute' bottom=${0} right=${0} opacity=${0.3}>
@@ -71,14 +71,15 @@
     /* user templates defined in org file */
 
 let tp1 = ({ slideNumber, numberOfSlides }) => html`
+
 <${FlexBox} justifyContent="space-between" position="absolute" bottom=${0} width=${1}>
   <${Box} padding="0 1em">
     <${FullScreen} />
-  </Box>
+  </${Box}>
   <${Box} padding="1em">
     <${AnimatedProgress} />
-  </Box>
-</FlexBox>
+  </${Box}>
+</${FlexBox}>
 `;
 
     /* user scripts defined in org file */
@@ -134,7 +135,8 @@ const renderSomeBoxes = (n) =>
 
 <!------ slide (2) begin ------>
 
-<${Slide}><${FlexBox} height="100%"><${SpectacleLogo} size=${500} />
+<${Slide}><${FlexBox} height="100%">
+<${SpectacleLogo} size=${500} />
 </${FlexBox}>
 
 <${Notes}><${Text}>Spectacle supports notes per slide.
@@ -144,8 +146,7 @@ const renderSomeBoxes = (n) =>
 </ol></${Text}>
 </${Notes}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Logo
 ** <FlexBox height="100%">
@@ -162,7 +163,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -176,8 +176,7 @@ ${`
 <${Heading} margin="0px 32px" fontSize="h3" color="primary">Where you can write your decks in JSX, Markdown, or MDX!</${Heading}>
 </${FlexBox}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Introduction
 ** <FlexBox height="100%" flexDirection="column">
@@ -193,7 +192,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -211,8 +209,7 @@ ${`
 <${ListItem}><${CodeSpan}>${`backgroundRepeat`}</${CodeSpan}></${ListItem}>
 </${UnorderedList}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Backgrounds and List
   :PROPERTIES:
@@ -231,7 +228,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -252,8 +248,7 @@ ${`
 </${Appear}>
 </${OrderedList}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Animated Elements
 
@@ -266,7 +261,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -292,8 +286,7 @@ ${`
 <${Grid} gridTemplateColumns="1fr 1fr 1fr" gridTemplateRows="1fr 1fr 1fr" gridRowGap=${1}>${ renderSomeBoxes(9) }
 </${Grid}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 ** <FlexBox>
 
@@ -330,7 +323,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -339,8 +331,7 @@ ${`
 
 <${Slide}><${Text}>This is a slide fragment.</${Text}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Fragment1
 
@@ -348,7 +339,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -363,8 +353,7 @@ ${`
 <${Appear}><${Text}>This item also shows up!</${Text}>
 </${Appear}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Fragment2
 
@@ -380,7 +369,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -404,7 +392,6 @@ const App = () => (
 </${CodePane}>
 </${Box}>
 
-<${Box}>
 <${CodePane} language='java' showLineNumbers=${false}>
 ${`
 public class NoLineNumbers {
@@ -415,10 +402,8 @@ public class NoLineNumbers {
 
 `}
 </${CodePane}>
-</${Box}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * CodePane
 
@@ -445,7 +430,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -456,8 +440,7 @@ ${`
 
 <p class="my-warning">This is not implement yet, because i don't understand what this used for.</p>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Slide Embedded in Div?
 
@@ -469,7 +452,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -494,8 +476,7 @@ ${`
 
 <p class="my-warning">Markdown slides is not supported, I don't think it's necessary.</p>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Markdown Slides
 
@@ -516,7 +497,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
@@ -532,12 +512,12 @@ ${`
 <${FlexBox} ...${fbc}><${Text} textAlign="center">It uses Spectacle <${CodeSpan}>${`<Grid />`}</${CodeSpan}> and <${CodeSpan}>${`<FlexBox />`}</${CodeSpan}> components.</${Text}>
 </${FlexBox}>
 
-<${FlexBox} ...${fbc}><${Box} width=${200} height=${200} backgroundColor="secondary" />
+<${FlexBox} ...${fbc}>
+<${Box} width=${200} height=${200} backgroundColor="secondary" />
 </${FlexBox}>
 </${Grid}>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Grid
 ** <Grid gridTemplateColumns="50% 50%" gridTemplateRows="50% 50%" height="100%">
@@ -562,15 +542,13 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${Slide}>
 
 
 <!------ slide (13) begin ------>
 
-<${SlideLayout.List} title="Slide layouts" items=${['Two-column', 'Lists' , 'Center', 'And more!']} animateListItems><${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${SlideLayout.List} title="Slide layouts" items=${['Two-column', 'Lists' , 'Center', 'And more!']} animateListItems><${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * SlideLayout.List
   :PROPERTIES:
@@ -580,19 +558,18 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 </${ViewSource}>
 </${SlideLayout.List}>
 
 
 <!------ slide (14) begin ------>
 
-<${SlideLayout.Center}><div class="anibox">
+<${SlideLayout.Center}>
+<div class="anibox">
   <${SpectacleLogo} size=${100} />
 </div>
 
-<${ViewSource}><${Box}>
-<${CodePane} language='org' showLineNumbers=${false}>
+<${ViewSource}><${CodePane} language='org' showLineNumbers=${false}>
 ${`
 * Logo centered with SlideLayout.Center
   :PROPERTIES:
@@ -605,7 +582,6 @@ ${`
 
 `}
 </${CodePane}>
-</${Box}>
 
 <${Box} marginTop="8px">
 <${CodePane} language='css' showLineNumbers=${false}>
