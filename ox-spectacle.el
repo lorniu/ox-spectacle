@@ -551,8 +551,8 @@ holding contextual information."
             ;; headline with <Component props> declaration has the highest priority
             (when (string-match (format "<\\${\\(%s\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}\\( [^>]*\\|\\)>\\(\\(?:<.*>\\)?\\)$" regexp) title)
               (let ((tt (match-string 1 title)))
-                ;; special case, <FlexBox/Box/Grid/Appear> on slide headline, wrapper
-                (if (and slide-headline-p (member tt (list "FlexBox" "Box" "Grid" "Appear")))
+                ;; special case, <FlexBox/Box/Grid/Appear..> on slide headline, wrapper
+                (if (and slide-headline-p (string-match-p "Box\\|Grid\\|Appear" tt))
                     (setq inline-prefix (match-string 0 title))
                   (setq inline-tag (match-string 1 title)
                         inline-props (ox-spectacle--wa (match-string 2 title))
