@@ -72,9 +72,10 @@
     (:text-opts              "TEXT_OPTS"         nil ox-spectacle-text-opts space)
     (:export-level           "EXPORT_LEVEL"      0   ox-spectacle-export-level)
     (:extern-components      "EXTERN_COMPONENTS" nil ox-spectacle-extern-components split)
+    (:scripts                "SCRIPTS"           nil ox-spectacle-scripts split)
     (:extra-scripts          "EXTRA_SCRIPTS"     nil ox-spectacle-extra-scripts split)
-    (:html-doctype           nil                 nil ox-spectacle--doctype)
-    (:with-special-strings   nil                 nil))
+    (:split                  "SPLIT"             nil) ; daum
+    (:html-doctype           nil                 nil ox-spectacle--doctype))
 
   :translate-alist
   '((template        . ox-spectacle--template)
@@ -96,7 +97,8 @@
     (link            . ox-spectacle--link)
     (paragraph       . ox-spectacle--paragraph)
     (plain-text      . ox-spectacle--plain-text)
-    (latex-fragment  . ox-spectacle--latex-fragment))
+    (latex-fragment  . ox-spectacle--latex-fragment)
+    (keyword         . ox-spectacle--keyword))
 
   :filters-alist
   '((:filter-options . ox-spectacle--init-filter)
@@ -289,7 +291,9 @@ If level is 1 or 3 then embeded the contents into html. Fetch the contents
 from the url or path, cache them if nessesary. FORCENEW the cache when
 it's non-nil. INFO is a plist holding export options."
   (let ((lv (ox-spectacle--export-level info))
-        (scripts (append ox-spectacle-scripts (plist-get info :extra-scripts))))
+        (scripts (append
+                  (plist-get info :scripts)
+                  (plist-get info :extra-scripts))))
     (if (or (= lv 1) (>= lv 3))
         (let* ((name (md5 (mapconcat #'identity scripts)))
                (file (format ox-spectacle-cache-file-tpl name)))
@@ -582,6 +586,10 @@ holding contextual information."
             ;; normalize
             (if (string-match-p regexp tag) (setq tag (format "${%s}" tag)))
             (setq props (ox-spectacle--filter-image (ox-spectacle--compat-props-react-htm props) info))
+            ;; work with #+split: t, wrap <Box> for every part
+            (let ((cs (split-string contents "#spectacle-splitter#" t)))
+              (when (> (length cs) 1)
+                (setq contents (mapconcat (lambda (c) (concat "\n<${Box}>\n" (string-trim c) "\n</${Box}>\n")) cs))))
             ;; final output
             (concat prefix "<" tag props ">" inline-prefix contents inline-suffix "</" tag ">")))))))
 
@@ -629,7 +637,7 @@ INFO is a plist holding contextual information."
 INFO is a plist holding contextual information."
   (let ((attributes (org-export-read-attribute :attr_html example-block)))
     (if (plist-get attributes :textarea)
-	    (org-html--textarea-block example-block)
+        (org-html--textarea-block example-block)
       (concat "<div className='example'>\n"
               (ox-spectacle--src-block
                example-block
@@ -640,9 +648,9 @@ INFO is a plist holding contextual information."
 (defun ox-spectacle--fixed-width (fixed-width _contents _info)
   "Transcode a FIXED-WIDTH element from Org to HTML."
   (format "<div className=\"example fixed-width\"><${CodePane} showLineNumbers=${false}>\n%s</${CodePane}></div>"
-	      (org-html-do-format-code
-	       (org-remove-indentation
-	        (org-element-property :value fixed-width)))))
+          (org-html-do-format-code
+           (org-remove-indentation
+            (org-element-property :value fixed-width)))))
 
 (defun ox-spectacle--quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to HTML.
@@ -901,6 +909,27 @@ INFO is a plist holding contextual information."
   (let* ((latex-frag (org-element-property :value latex-fragment))
          (result (org-html-format-latex latex-frag 'mathjax info)))
     (string-replace "\\" "\\\\" result)))
+
+(defun ox-spectacle--keyword (keyword _contents info)
+  "Transcode a KEYWORD element from Org to HTML.
+CONTENTS is nil. INFO is a plist holding contextual information."
+  (let ((key (org-element-property :key keyword))
+        (value (org-element-property :value keyword)))
+    (cond
+     ((string= key "HTML") value)
+     ((string= key "SPLIT")
+      (pcase value
+        ("t" "#spectacle-splitter#")
+        (otherwise
+         (let ((parsed (progn
+                         (string-match "^\\([0-9\\.]+\\)?\\(.*\\)" value)
+                         (cons (match-string 1 value) (match-string 2 value)))))
+           (format "<${Box} height=\"%s\"%s></${Box}>"
+                   (if (car parsed) (format "%sem" (car parsed)) "5px")
+                   (ox-spectacle--wa
+                    (ox-spectacle--filter-image
+                     (ox-spectacle--compat-props-react-htm (cdr parsed))
+                     info))))))))))
 
 
 ;;; Mode
