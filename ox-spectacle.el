@@ -74,7 +74,8 @@
     (:extern-components      "EXTERN_COMPONENTS" nil ox-spectacle-extern-components split)
     (:scripts                "SCRIPTS"           nil ox-spectacle-scripts split)
     (:extra-scripts          "EXTRA_SCRIPTS"     nil ox-spectacle-extra-scripts split)
-    (:split                  "SPLIT"             nil) ; daum
+    (:split                  "SPLIT"             nil) ; keep for capf
+    (:with-special-strings   nil                 nil) ; don't escape ...
     (:html-doctype           nil                 nil ox-spectacle--doctype))
 
   :translate-alist
@@ -609,7 +610,8 @@ INFO is a plist holding contextual information."
          (flags (cadr (ox-spectacle--pop-from-plist props :type)))
          (props (ox-spectacle--wa (ox-spectacle--make-attribute-string props info)))
          (code-props (ox-spectacle--wa (ox-spectacle--make-attribute-string code-props info)))
-         (root (car (ox-spectacle--get-headlines element))))
+         (root (car (ox-spectacle--get-headlines element)))
+         (tag "CodePane"))
     ;; catch scripts under <config> section and others with ':type config' above
     (if (or (and flags (string-equal (downcase flags) "config"))
             (string-equal (downcase (or (org-element-property :raw-value root) "")) "<config>"))
@@ -622,13 +624,23 @@ INFO is a plist holding contextual information."
             ((or "js" "javascript") (setq ox-spectacle--extra-javascript
                                           (concat ox-spectacle--extra-javascript "\n" code))))
           "")
-      ;; others, make it a CodePane
+      ;; others, make it a CodePane or CustomCodePane
+      (when (and flags (string-match "^\\([A-Z][[:alnum:]]+\\)\\(.*\\)" flags))
+        (setq tag (match-string 1 flags)
+              code-props (ox-spectacle--wa
+                          (ox-spectacle--filter-image
+                           (ox-spectacle--compat-props-react-htm
+                            (concat code-props " " (match-string 2 flags)))
+                           info))
+              flags nil))
       (let ((contents
-             (format "%s<${CodePane}%s%s%s>\n${`\n%s\n`}\n</${CodePane}>%s"
-                     (if (string-empty-p props) "" (format "<${Box}%s>\n" props))
+             (format "%s\n<${%s}%s%s%s>\n${`\n%s\n`}\n</${%s}>%s"
+                     (if (string-empty-p props) "" (format "\n<${Box}%s>" props))
+                     tag
                      (if lang (concat " language='" lang "'") "")
                      (if linum "" (concat " showLineNumbers=${false}"))
                      code-props code
+                     tag
                      (if (string-empty-p props) "" "\n</${Box}>"))))
         (ox-spectacle--maybe-appear contents flags)))))
 
