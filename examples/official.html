@@ -220,7 +220,8 @@ const fbc = { alignItems: "center", justifyContent: "center" };
 
 <!------ slide (8) begin ------>
 
-<${Slide}><${Box} marginBottom=${20}>
+<${Slide}>
+<${Box} marginBottom=${20}>
 <${CodePane} language='jsx' showLineNumbers=${false} showLineNumbers=${true}>
 ${`
 import { createClient, Provider } from 'urql';
@@ -236,6 +237,7 @@ const App = () => (
 `}
 </${CodePane}>
 </${Box}>
+
 
 <${CodePane} language='java' showLineNumbers=${false}>
 ${`
@@ -261,6 +263,7 @@ public class NoLineNumbers {
 <!------ slide (10) begin ------>
 
 <${Slide}><${Text}>Write Slides with markdown?</${Text}>
+
 
 <${Box} margin="1em 1.5em 5em 1.5em">
 <${CodePane} language='markdown' showLineNumbers=${false}>

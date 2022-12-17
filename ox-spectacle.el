@@ -336,7 +336,7 @@ If PATH is a remote url, download it."
                  (base64-encode-string content 'no-line-break))))
     (format "data:image/%s,%s" type data)))
 
-(defun ox-spectacle--filter-image (props info)
+(defun ox-spectacle--props-inline-image (props info)
   "Replace all image url in PROPS to inline data.
 If url is remote, download it! INFO is a plist holding contextual information."
   (if (and info
@@ -359,9 +359,17 @@ If url is remote, download it! INFO is a plist holding contextual information."
        props)
     props))
 
-(defun ox-spectacle--compat-props-react-htm (props)
+(defun ox-spectacle--props-compat-react-htm (props)
   "Make PROPS compat with react-htm syntax, that is, add $ if nessesary."
   (replace-regexp-in-string "\\(=\\|\\.\\.\\.\\){" "\\1${" props))
+
+(defun ox-spectacle--filter-props (props &optional info)
+  "Apply all filters to PROPS to make it compat with Spectacle.
+INFO is a plist holding contextual information."
+  (setq props (ox-spectacle--props-compat-react-htm props))
+  (when info
+    (setq props (ox-spectacle--props-inline-image props info)))
+  (ox-spectacle--wa props))
 
 (defun ox-spectacle--extract-options (opts info &optional normed)
   "Parse the value of OPTS from INFO.
@@ -375,11 +383,7 @@ Parse and return them as cons. If NORMED non-nil, apply the filters on props."
           (setq tag tg)))
       (setq props (string-trim (cl-subseq opts (length tag))))
       (when normed
-        (setq props
-              (ox-spectacle--wa
-               (ox-spectacle--filter-image
-                (ox-spectacle--compat-props-react-htm props)
-                info))))
+        (setq props (ox-spectacle--filter-props props info)))
       (cons tag (if (> (length props) 0) props)))))
 
 (defun ox-spectacle--available-components (&optional info)
@@ -434,8 +438,8 @@ When ELEMENT is headline and WITH-SELF is t, then add itself to the result."
   (if (and flags (string-match "^\\([A0-9]\\)[ \t]*\\(.*\\)$" flags))
       (let ((priority (when-let ((s (match-string 1 flags)))
                         (if (string-equal s "A") nil s)))
-            (props (when-let ((s (ox-spectacle--wa (match-string 2 flags))))
-                     (ox-spectacle--compat-props-react-htm s))))
+            (props (when-let ((s (match-string 2 flags)))
+                     (ox-spectacle--props-compat-react-htm s))))
         (concat "<${Appear}"
                 (ox-spectacle--wa props)
                 (if priority (format " priority=${%s}" priority)) ">\n"
@@ -459,7 +463,7 @@ INFO is a plist."
                        (t (setq value (replace-regexp-in-string "\"" "&quot;" value t))))
                  (setcar output (format (if (string-match-p "^\\${.*}$" value) "%s=%s" "%s=\"%s\"")
                                         key value))))))
-    (ox-spectacle--filter-image (mapconcat 'identity (nreverse output) " ") info)))
+    (ox-spectacle--props-inline-image (mapconcat 'identity (nreverse output) " ") info)))
 
 (defmacro ox-spectacle-advice (&rest body)
   "Add advices to BODY."
@@ -586,7 +590,7 @@ holding contextual information."
                 (setq tag "Box")))
             ;; normalize
             (if (string-match-p regexp tag) (setq tag (format "${%s}" tag)))
-            (setq props (ox-spectacle--filter-image (ox-spectacle--compat-props-react-htm props) info))
+            (setq props (ox-spectacle--filter-props props info))
             ;; work with #+split: t, wrap <Box> for every part
             (let ((cs (split-string contents "#spectacle-splitter#" t)))
               (when (> (length cs) 1)
@@ -627,11 +631,7 @@ INFO is a plist holding contextual information."
       ;; others, make it a CodePane or CustomCodePane
       (when (and flags (string-match "^\\([A-Z][[:alnum:]]+\\)\\(.*\\)" flags))
         (setq tag (match-string 1 flags)
-              code-props (ox-spectacle--wa
-                          (ox-spectacle--filter-image
-                           (ox-spectacle--compat-props-react-htm
-                            (concat code-props " " (match-string 2 flags)))
-                           info))
+              code-props (ox-spectacle--filter-props (concat code-props " " (match-string 2 flags)) info)
               flags nil))
       (let ((contents
              (format "%s\n<${%s}%s%s%s>\n${`\n%s\n`}\n</${%s}>%s"
@@ -703,9 +703,10 @@ holding export options."
          (tag (if ordered "OrderedList" "UnorderedList")))
     (format "<${%s}%s>\n%s</${%s}>\n" tag props contents tag)))
 
-(defun ox-spectacle--item (_item contents _info)
+(defun ox-spectacle--item (_item contents info)
   "Transcode an _ITEM element from Org to HTML.
-CONTENTS holds the contents of the item."
+CONTENTS holds the contents of the item. INFO is a plist
+holding export options."
   (let (len flags props (contents (or contents "")))
     ;; <A/NUM>: make it Appear; pass proper props to ListItem or Appear
     (when (string-match "^<\\([^>$][^>]*\\)>" (car (split-string contents "\n")))
@@ -738,7 +739,7 @@ CONTENTS holds the contents of the item."
                 (ox-spectacle--wa (buffer-string)))))
       (setq contents (cl-subseq contents len)))
     (setq contents (concat "<${ListItem}"
-                           (if props (ox-spectacle--wa (ox-spectacle--compat-props-react-htm props))) ">"
+                           (if props (ox-spectacle--filter-props props info)) ">"
                            (string-trim contents)
                            "</${ListItem}>"))
     (ox-spectacle--maybe-appear contents flags)))
@@ -878,7 +879,7 @@ the plist used as a communication channel."
                            (search-forward ">")
                            (backward-char)
                            (insert (ox-spectacle--wa props))
-                           (concat (ox-spectacle--filter-image (buffer-substring (point-min) (point)) info)
+                           (concat (ox-spectacle--props-inline-image (buffer-substring (point-min) (point)) info)
                                    (buffer-substring (point) (point-max))))
                 tag t)))
       ;; fallback tag and props to :text-opts or Text
@@ -907,11 +908,11 @@ TEXT is the string to transcode. INFO is a plist holding contextual information.
                           (props (or (match-string 2 old) "")))
                       (if (string-prefix-p "/" tag)
                           (format "</${%s}>" (cl-subseq tag 1))
-                        (format "<${%s}%s>" tag (ox-spectacle--compat-props-react-htm props))))))
+                        (format "<${%s}%s>" tag (ox-spectacle--props-compat-react-htm props))))))
                 text t t))
     ;; add $ for props of plain html tag, make it compat with react syntax
     (when (string-match-p (format "<\\(%s\\)[ \t]" (mapconcat #'identity ox-spectacle--html-tags "\\|")) text)
-      (setq text (ox-spectacle--compat-props-react-htm text)))
+      (setq text (ox-spectacle--props-compat-react-htm text)))
     (let ((org-html-protect-char-alist nil))
       (setq text (org-html-plain-text text info)))))
 
@@ -938,10 +939,7 @@ CONTENTS is nil. INFO is a plist holding contextual information."
                          (cons (match-string 1 value) (match-string 2 value)))))
            (format "<${Box} height=\"%s\"%s></${Box}>"
                    (if (car parsed) (format "%sem" (car parsed)) "5px")
-                   (ox-spectacle--wa
-                    (ox-spectacle--filter-image
-                     (ox-spectacle--compat-props-react-htm (cdr parsed))
-                     info))))))))))
+                   (ox-spectacle--filter-props (cdr parsed) info)))))))))
 
 
 ;;; Mode
