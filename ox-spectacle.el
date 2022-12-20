@@ -528,7 +528,8 @@ CONTENTS is the transcoded contents string."
   "Transcode a HEADLINE element from Org to HTML.
 CONTENTS holds the contents of the headline. INFO is a plist
 holding contextual information."
-  (let ((title (org-export-data (org-element-property :title headline) info))
+  (let ((case-fold-search t)
+        (title (org-export-data (org-element-property :title headline) info))
         (level (org-element-property :level headline))
         (headlines (ox-spectacle--get-headlines headline t)))
     ;; the special <config> section
@@ -549,15 +550,15 @@ holding contextual information."
            (t "")))
       (let ((layout (org-element-property :LAYOUT headline)))
         ;; if layout is top, then headlines under it will be a slide page
-        (if (string-equal layout "top") contents
+        (if (and layout (string-match-p "^top$" layout)) contents
           (let* ((props (ox-spectacle--wa (org-element-property :PROPS headline)))
                  (type (org-element-property :TYPE headline))
                  (tag type)
                  (headnums (org-export-get-headline-number headline info))
                  (regexp (format "\\(?:%s\\)" (mapconcat #'identity (ox-spectacle--available-components info) "\\|")))
-                 (slide-headline-p (or (= level 1) (string-equal (org-element-property :LAYOUT (org-element-lineage headline '(headline))) "top")))
+                 (slide-headline-p (or (= level 1) (string-match-p "^top$" (or (org-element-property :LAYOUT (org-element-lineage headline '(headline))) ""))))
                  prefix inline-tag inline-props inline-prefix inline-suffix slide-title)
-            ;; headline with <Component props> declaration has the highest priority
+            ;; headline with <Component.Xxx props> declaration has the highest priority
             (when (string-match (format "<\\${\\(%s\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}\\( [^>]*\\|\\)>\\(\\(?:<.*>\\)?\\)$" regexp) title)
               (let ((tt (match-string 1 title)))
                 ;; special case, <FlexBox/Box/Grid/Appear..> on slide headline, wrapper
@@ -572,7 +573,7 @@ holding contextual information."
                 (goto-char (point-min))
                 (while (re-search-forward "<${\\([A-Z][a-zA-Z0-9]+\\(?:\\.[A-Z][a-zA-Z0-9]+\\)*\\)}" nil t)
                   (setq inline-suffix (concat " </${" (match-string 1) "}>" inline-suffix)))))
-            ;; top-most/under-t-layout headline, should be a Slide or SlideLayout
+            ;; top-most/under-top-layout, should be a Slide or SlideLayout
             (when slide-headline-p
               (let* ((slide-opts (ox-spectacle--extract-options :slide-opts info))
                      (slide-tag (car slide-opts))
@@ -583,7 +584,7 @@ holding contextual information."
                       (type (setq tag type)))
                 (unless tag (setq tag (or slide-tag "Slide")))
                 (if (= (length props) 0) (setq props slide-props))
-                ;; Add title/num props to user custom Slide page
+                ;; add props title and num to user custom Slide
                 (unless (string-match-p "^\\(Slide\\|SlideLayout\\..*\\)$" tag)
                   (let ((st (or slide-title title)))
                     (when (not (string-match-p " num=" props))
@@ -599,7 +600,7 @@ holding contextual information."
             ;; normalize
             (if (string-match-p regexp tag) (setq tag (format "${%s}" tag)))
             (setq props (ox-spectacle--filter-props props info))
-            ;; work with #+split: t, wrap <Box> for every part
+            ;; work with #+split: t, wrap every part with <Box>
             (let ((cs (split-string contents "#spectacle-splitter#" t)))
               (when (> (length cs) 1)
                 (setq contents (mapconcat (lambda (c) (concat "\n<${Box}>\n" (string-trim c) "\n</${Box}>\n")) cs))))
