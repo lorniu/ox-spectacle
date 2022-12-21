@@ -698,6 +698,9 @@ holding contextual information."
 (defun ox-spectacle--verbatim (verbatim contents info)
   "Transcode VERBATIM from Org to HTML.
 CONTENTS is the contents, INFO is a plist holding export options."
+  (let ((v (org-element-property :value verbatim)))
+    (setq v (replace-regexp-in-string "\\(`\\|\\$\\)" "\\\\\\1" v))
+    (org-element-put-property verbatim :value v))
   (ox-spectacle--code verbatim contents info))
 
 (defun ox-spectacle--plain-list (plain-list contents info)
