@@ -103,9 +103,9 @@ The Nine‑Square Grid
 
 ** Notice     <Box className="t2">
 
-  Stepper is very flexable.
-  But a bit complex.
-  Learn or not, your choice.
+  <div className="t21"><b>Stepper</b> is flexable.</div>
+  <div className="t22">But a bit complex.</div>
+  <div className="t23">Maybe this is a problem.</div>
    
 ** -------    <Stepper values={data1}>
 
@@ -118,15 +118,13 @@ ${stepper1}
   const stepper1 = (v, i, act) => {
       const t1 = dq(".t1");
       if (t1) {
-          const images = dqa(".f1 img") ;
+          const images = dqa(".f1 figure") ;
           images.forEach(i => i.classList.remove("f1c"));
           if (act) {
               t1.innerText = v;
               images[i].classList.add("f1c");
-              if (i == 3) { dq(".t2").style.opacity = "1"; }
           } else {
               t1.innerText = "-";
-              dq(".t2").style.opacity = "0";
           }
       }
   }
@@ -135,11 +133,19 @@ ${stepper1}
 #+ATTR_HTML: :type config
 #+begin_src css
   .f1 { margin-left: 5em; justify-content: flex-start; flex-flow: row nowrap; }
-  .f1 img { margin-right: 1em; width: 120px; transition: all 0.3s; }
+  .f1 figure { margin: 0 1em 0 0; width: 120px; transition: all 0.3s; }
   .f1c { transform: scale(1.2) }
 
   .t1 { text-align: left; font-size: 100px; margin: 1em; color: white; }
-  .t2 { position: absolute; bottom: 150px; right: 150px; opacity: 0; color: silver; transition: opacity 2s; white-space: pre; }
+
+  .t2 { position: absolute; bottom: 200px; right: 150px; width: 300px; height: 100px; color: silver; white-space: pre; }
+  .t2 > div { position: absolute; left: 0; font-size: 30px; }
+  .t21 { top: 0px;  animation: kf21 2s ease; color: pink; }
+  .t22 { top: 50px; animation: kf22 3s ease; }
+  .t23 { top: 100px; animation: kf23 4s ease; }
+  @keyframes kf21 { 0% { top: 300px; color: silver; } 100% { top: 0; color: silver;} }
+  @keyframes kf22 { 0% { top: 500px } 100% { top: 50px; } }
+  @keyframes kf23 { 0% { top: 800px } 100% { top: 100px; } }
 #+end_src
 
 * Third-party Libraries <Grid className="ga">
@@ -175,17 +181,15 @@ Charts, Maps and others. Whatever you want.
 
 ** Chart.js   <Appear><FlexBox className="gia">
 
-#+EXTRA_SCRIPTS: https://cdn.jsdelivr.net/npm/chart.js
+#+EXTRA_SCRIPTS: https://unpkg.com/chart.js
 
 [[https://www.chartjs.org/][Chart.js]]
 
-<section style={{ width: "400px" }}>
-  <canvas id="myChart1" style={{width: "400px"}} className="ci"></canvas>
-</section>
+<canvas id="myChart1" className="ci"></canvas>
 
 #+ATTR_HTML: :type config
 #+begin_src js
-  function x1 () {
+  window.onload = function () {
       new Chart(document.getElementById('myChart1'), {
           type: 'bar',
           data: {
@@ -193,14 +197,14 @@ Charts, Maps and others. Whatever you want.
               datasets: [{ label: '# of Balls', data: [12, 19, 3, 5, 2, 3], borderWidth: 1 }]
           },
           options: {
+              responsive: false,
               scales: { y: { beginAtZero: true } }
           }
       });
   }
-  window.addEventListener('load', () => setTimeout(x1, 0));
 #+end_src
 
-** Code       <FlexBox className="gia" style={{ transform: "scale(0.6)" }}>
+** Code       <FlexBox className="gia" style={{ transform: "scale(0.7)" }}>
 
 #+ATTR_HTML: :style {{ color: "silver", fontSize: "1.2em" }}
 Declare the scripts and components, then use directly.

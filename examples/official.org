@@ -17,8 +17,7 @@ Spectacle supports notes per slide.
   <li>Lists can make it easier to make points.</li>
 </ol>
 
-* Introduction
-** <FlexBox height="100%" flexDirection="column">
+* Introduction <FlexBox height="100%" flexDirection="column">
 
 #+ATTR_HTML: :type Heading :margin 0px :fontSize 150px
 ✨<i>Spectacle</i> ✨
@@ -29,13 +28,11 @@ A ReactJS Presentation Library
 #+ATTR_HTML: :type Heading :margin 0px 32px :fontSize h3 :color primary
 Where you can write your decks in JSX, Markdown, or MDX!
 
-* Backgrounds and List
+* Custom Backgrounds
 :PROPERTIES:
+:type: SlideWithTitle
 :props: transition={ts1} backgroundColor="tertiary" backgroundImage="url(https://github.com/FormidableLabs/dogs/blob/main/src/beau.jpg?raw=true)" backgroundOpacity={0.5}
 :END:
-
-#+ATTR_HTML: :type Heading
-Custom Backgrounds
 
 - =backgroundColor=
 - =backgroundImage=
@@ -45,9 +42,9 @@ Custom Backgrounds
 - =backgroundRepeat=
 
 * Animated Elements
-
-#+ATTR_HTML: :type Heading
-Animated Elements
+:PROPERTIES:
+:type: SlideWithTitle
+:END:
 
 1. <A> Elements can animate in!
 2. <A> Out of order
@@ -91,26 +88,30 @@ Double-size Grid Item
           </${FlexBox}>`);
 #+end_src
 
-* Fragment1
+* Fragments
+:PROPERTIES:
+:layout: top
+:END:
+
+** Fragment1
 
 This is a slide fragment.
 
-* Fragment2
+** Fragment2
 
 This is also a slide fragment.
 
-** <Appear>
-
+#+begin_Appear
 This item shows up!
+#+end_Appear
 
-** <Appear>
-
+#+begin_Appear
 This item also shows up!
+#+end_Appear
 
 * CodePane
 
-#+ATTR_HTML: :showLineNumbers {true} :marginBottom {20}
-#+begin_src jsx
+#+begin_src jsx -n
   import { createClient, Provider } from 'urql';
 
   const client = createClient({ url: 'https://0ufyz.sse.codesandbox.io' });
@@ -121,6 +122,8 @@ This item also shows up!
     </Provider>
   );
 #+end_src
+
+#+SPLIT: 1
 
 #+begin_src java
   public class NoLineNumbers {
@@ -155,23 +158,23 @@ Write Slides with markdown?
 #+ATTR_HTML: :type p :class my-warning
 Markdown slides is not supported, I don't think it's necessary.
 
-* Grid Layout <Grid ...{fba}>
-** <FlexBox ...{fbc}>
+* Grid Layout <Grid2x2>
+** <BoxCenter>
 
 #+ATTR_HTML: :type Heading
 This is a 4x4 Grid
 
-** <FlexBox ...{fbc}>
+** <BoxCenter>
 
 #+ATTR_HTML: :textAlign center
 With all the content aligned and justified center.
 
-** <FlexBox ...{fbc}>
+** <BoxCenter>
 
 #+ATTR_HTML: :textAlign center
 It uses Spectacle =<Grid />= and =<FlexBox />= components.
 
-** <FlexBox ...{fbc}>
+** <BoxCenter>
 
 <Box width={200} height={200} backgroundColor="secondary" />
 
@@ -186,9 +189,9 @@ It uses Spectacle =<Grid />= and =<FlexBox />= components.
 :layout: Center
 :END:
 
-<div class="anibox">
+#+begin_p class="anibox"
   <SpectacleLogo size={100} />
-</div>
+#+end_p
 
 #+ATTR_HTML: :type config
 #+begin_src css
@@ -243,15 +246,11 @@ Maybe used by other slide or components.
   }
 #+end_src
 
-** extra scripts used in the export
+** extra scripts/styles
 
 #+begin_src js
   const formidableLogo = 'https://avatars2.githubusercontent.com/u/5078602?s=280&v=4';
-  const fba = { gridTemplateColumns: "50% 50%", gridTemplateRows: "50% 50%", height: "100%" };
-  const fbc = { alignItems: "center", justifyContent: "center" };
 #+end_src
-
-** extra styles used in the export
 
 #+begin_src css
   .my-warning {
@@ -266,3 +265,12 @@ Maybe used by other slide or components.
   }
 #+end_src
 
+** define Components, react-htm syntax
+
+#+EXTERN_COMPONENTS: SlideWithTitle Grid2x2 BoxCenter
+
+#+begin_src js
+  const SlideWithTitle = (props) => html`<${Slide} ...${props}><${Heading}>${props.title}</${Heading}>${props.children}</${Slide}>`;
+  const Grid2x2 = (props) => html`<${Grid} ...${props}, gridTemplateRows="50% 50%", gridTemplateColumns="50% 50%" height="100%"></${Grid}>`;
+  const BoxCenter = (props) => html`<${FlexBox} ...${props}, alignItems="center", justifyContent="center"></${FlexBox}>`;
+#+end_src
