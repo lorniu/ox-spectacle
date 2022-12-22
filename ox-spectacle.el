@@ -86,6 +86,7 @@
     (src-block       . ox-spectacle--src-block)
     (example-block   . ox-spectacle--example-block)
     (verse-block     . ox-spectacle--verse-block)
+    (special-block   . ox-spectacle--special-block)
     (fixed-width     . ox-spectacle--fixed-width)
     (quote-block     . ox-spectacle--quote-block)
     (center-block    . ox-spectacle--center-block)
@@ -686,6 +687,24 @@ contextual information."
        (replace-regexp-in-string "\\(`\\|\\$\\)" "\\\\\\1" contents))))
    info))
 
+(defun ox-spectacle--special-block (special-block contents info)
+  "Transcode a SPECIAL-BLOCK element from Org to HTML.
+CONTENTS holds the contents of the block. INFO is a plist
+holding contextual information."
+  (let* ((type (org-element-property :type special-block))
+         (params (org-element-property :parameters special-block))
+         (props (org-export-read-attribute :attr_html special-block))
+         (flags (cadr (ox-spectacle--pop-from-plist props :type)))
+         (tag (if-let ((c (cl-find-if
+                           (lambda (c) (string-match-p (concat "^" c "$") type))
+                           (ox-spectacle--available-components))))
+                  (concat "${" c "}")
+                type))
+         (props (concat (if params (ox-spectacle--filter-props params))
+                        (ox-spectacle--wa (ox-spectacle--make-attribute-string props info)))))
+    (ox-spectacle--maybe-appear (format "<%s%s>\n%s</%s>" tag props contents tag)
+                                flags)))
+
 (defun ox-spectacle--fixed-width (fixed-width _contents _info)
   "Transcode a :FIXED-WIDTH element from Org to HTML."
   (format "<div className=\"example fixed-width\"><${CodePane} showLineNumbers=${false}>\n%s</${CodePane}></div>"
@@ -965,13 +984,12 @@ CONTENTS is nil. INFO is a plist holding contextual information."
      ((string= key "SPLIT")
       (pcase value
         ("t" "#spectacle-splitter#")
-        (otherwise
-         (let ((parsed (progn
-                         (string-match "^\\([0-9\\.]+\\)?\\(.*\\)" value)
-                         (cons (match-string 1 value) (match-string 2 value)))))
-           (format "<${Box} height=\"%s\"%s></${Box}>"
-                   (if (car parsed) (format "%sem" (car parsed)) "5px")
-                   (ox-spectacle--filter-props (cdr parsed) info)))))))))
+        (_ (let ((parsed (progn
+                           (string-match "^\\([0-9\\.]+\\)?\\(.*\\)" value)
+                           (cons (match-string 1 value) (match-string 2 value)))))
+             (format "<${Box} height=\"%s\"%s></${Box}>"
+                     (if (car parsed) (format "%sem" (car parsed)) "5px")
+                     (ox-spectacle--filter-props (cdr parsed) info)))))))))
 
 
 ;;; Mode
