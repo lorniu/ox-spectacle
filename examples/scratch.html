@@ -5,19 +5,41 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
   <title>Scratch</title>
 
+
 <!-- MathJax Setup -->
 
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-        "HTML-CSS": { scale: 1.0, linebreaks: { automatic: "%LINEBREAKS" }, webFont: "mathjax-modern" },
-        SVG: {scale: 1.0, linebreaks: { automatic: "%LINEBREAKS" }, font: "mathjax-modern"},
-        NativeMML: {scale: 1.0},
-        TeX: { equationNumbers: {autoNumber: "%AUTONUMBER"}, MultLineWidth: "85%", TagSide: "right", TagIndent: ".8em" }
-    });
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
 </script>
-<script src="https://cdn.bootcdn.net/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML" async></script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 
 <!-- scripts -->
 
@@ -28,17 +50,39 @@
 <script src='https://unpkg.com/spectacle@^9/dist/spectacle.min.js'></script>
 <script src='https://unpkg.com/htm'></script>
 <script src='https://unpkg.com/recharts/umd/Recharts.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+<script src='https://unpkg.com/chart.js'></script>
 
-<!-- extra css catch from the org file -->
+<!-- styles -->
 
 <style>
+
+.codepane {}
+.split-container {
+  display: flex; flex-flow: column nowrap; justify-content: flex-start;
+  align-items: stretch; height: inherit; max-height: 100vh;
+}
+::-webkit-scrollbar { width: 5px; height: 80%; }
+::-webkit-scrollbar-track { background: rgb(179, 177, 177); border-radius: 5px; }
+::-webkit-scrollbar-thumb { background: rgb(136, 136, 136); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover  { background: rgb(100, 100, 100); border-radius: 5px; }
+::-webkit-scrollbar-thumb:active { background: rgb(68, 68, 68); border-radius: 5px; }
+
+/* extra css catch from the org file */
+
 .f1 { margin-left: 5em; justify-content: flex-start; flex-flow: row nowrap; }
-.f1 img { margin-right: 1em; width: 120px; transition: all 0.3s; }
+.f1 figure { margin: 0 1em 0 0; width: 120px; transition: all 0.3s; }
 .f1c { transform: scale(1.2) }
 
 .t1 { text-align: left; font-size: 100px; margin: 1em; color: white; }
-.t2 { position: absolute; bottom: 150px; right: 150px; opacity: 0; color: silver; transition: opacity 2s; white-space: pre; }
+
+.t2 { position: absolute; bottom: 200px; right: 150px; width: 300px; height: 100px; color: silver; white-space: pre; }
+.t2 > div { position: absolute; left: 0; font-size: 30px; }
+.t21 { top: 0px;  animation: kf21 2s ease; color: pink; }
+.t22 { top: 50px; animation: kf22 3s ease; }
+.t23 { top: 100px; animation: kf23 4s ease; }
+@keyframes kf21 { 0% { top: 300px; color: silver; } 100% { top: 0; color: silver;} }
+@keyframes kf22 { 0% { top: 500px } 100% { top: 50px; } }
+@keyframes kf23 { 0% { top: 800px } 100% { top: 100px; } }
 
 /* ease in out */
 .welcome { font-size: 25px; color: silver; opacity: 0.8; animation: kb1 3s; text-align: right; margin: -1em 1em }
@@ -67,12 +111,13 @@ a { color: skyblue !important; text-decoration: none !important; font-size: 20px
 /* Is there any more convenient way to add borders to Tables? */
 table { border-collapse: collapse; }
 table, th, td { border: 1px solid; padding: 5px 15px; font-size: 12px !important; }
+
 </style>
 
 </head>
 
 <body>
-  <div id='root'></div>
+  <div id="root"></div>
   <script type='module'>
 
     /* imports */
@@ -108,15 +153,13 @@ const data1 = ["To be_", "To be or not to be ?", "This_", "This is a problem..."
 const stepper1 = (v, i, act) => {
     const t1 = dq(".t1");
     if (t1) {
-        const images = dqa(".f1 img") ;
+        const images = dqa(".f1 figure") ;
         images.forEach(i => i.classList.remove("f1c"));
         if (act) {
             t1.innerText = v;
             images[i].classList.add("f1c");
-            if (i == 3) { dq(".t2").style.opacity = "1"; }
         } else {
             t1.innerText = "-";
-            dq(".t2").style.opacity = "0";
         }
     }
 }
@@ -126,7 +169,7 @@ const data111 = [{ name: 'a', uv: 4000, pv: 2400 },
                  { name: 'c', uv: 2000, pv: 3980 },
                  { name: 'd', uv: 6000, pv: 1398 }];
 
-function x1 () {
+window.onload = function () {
     new Chart(document.getElementById('myChart1'), {
         type: 'bar',
         data: {
@@ -134,11 +177,11 @@ function x1 () {
             datasets: [{ label: '# of Balls', data: [12, 19, 3, 5, 2, 3], borderWidth: 1 }]
         },
         options: {
+            responsive: false,
             scales: { y: { beginAtZero: true } }
         }
     });
 }
-window.addEventListener('load', () => setTimeout(x1, 0));
 
 const plst = {
     colors: {
@@ -164,7 +207,9 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 
 <!------ slide (1) begin ------>
 
-<${Slide} template=""><${Box} position="absolute" right="10vw" top="14vh"><p style=${{ fontSize: "100px" }}>Hi, Spectacle.</p>
+<${Slide} template="">
+<${Box} position="absolute" right="10vw" top="14vh">
+<p style=${{ fontSize: "100px" }}>Hi, Spectacle.</p>
 
 <p className="welcome">Welcome to Emacs's world.</p>
 </${Box}>
@@ -173,18 +218,24 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 
 <!------ slide (2) begin ------>
 
-<${Slide} backgroundImage="radial-gradient(grey, 80%, #111, black)" backgroundOpacity=${0.3}><${UnorderedList} theme=${plst} className="l1">
+<${Slide} backgroundImage="radial-gradient(grey, 80%, #111, black)" backgroundOpacity=${0.3}>
+<${UnorderedList} theme=${plst} className="l1">
 <${ListItem}>You can write native <${CodeSpan}>${`Spectacle`}</${CodeSpan}> code, you can use <${CodeSpan}>${`Org`}</${CodeSpan}> syntax, you can write what you want.</${ListItem}>
 <${ListItem}>Learn some <${CodeSpan}>${`CSS/JavaScript`}</${CodeSpan}> and <${CodeSpan}>${`ReactJS`}</${CodeSpan}> is nessesary when you want to have more fun.</${ListItem}>
 </${UnorderedList}>
 
-<${Grid} className="ng1"><${FlexBox} backgroundColor="darkred"><${Appear} priority=${5}><p>MathJax Support:</p>
+<${Grid} className="ng1">
+<${FlexBox} backgroundColor="darkred">
+<${Appear} priority=${5}><p>MathJax Support:</p>
 
 <p>\\(f(x) = x^2 + 1\\)</p>
  </${Appear}></${FlexBox}>
 
-<${FlexBox} backgroundColor="darkblue" justifyContent="flex-start"><${Appear} priority=${1}>
-<${Image} style=${{ marginLeft: "15px", width: "150px" }} src="hz.jpg" alt="hz.jpg" />
+<${FlexBox} backgroundColor="darkblue" justifyContent="flex-start">
+<${Appear} priority=${1}>
+<figure>
+  <${Image} src="hz.jpg" alt="hz.jpg" width="100%" style=${{ marginLeft: "15px", width: "150px" }} />
+</figure>
 </${Appear}>
 
 <${UnorderedList} theme=${{ sizes: { text: 60 }}}>
@@ -200,13 +251,15 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 </${UnorderedList}>
 </${FlexBox}>
 
-<${Appear} priority=${0}><${FlexBox} flexDirection="column" alignItems="center">
+<${Appear} priority=${0}>
+<${FlexBox} flexDirection="column" alignItems="center">
 <${SpectacleLogo} />
 
 <p>Spectacle + Emacs</p>
  </${FlexBox}></${Appear}>
 
-<${FlexBox} backgroundColor="darkgreen"><${Appear} priority=${7}>
+<${FlexBox} backgroundColor="darkgreen">
+<${Appear} priority=${7}>
 <${Table} width="250px">
 <${TableHeader}>
 <${TableRow}>
@@ -230,13 +283,17 @@ const makeStepper = (fun1, fun2) => (v, i, act) => {
 </${Appear}>
 </${FlexBox}>
 
-<${FlexBox} backgroundColor="white" style=${{ gridColumn: "2 / 4"}}><${Heading} fontSize=${48}>The Nine‑Square Grid</${Heading}>
+<${FlexBox} backgroundColor="white" style=${{ gridColumn: "2 / 4"}}>
+<${Heading} fontSize=${48}>The Nine‑Square Grid</${Heading}>
 </${FlexBox}>
 
-<${FlexBox} backgroundColor="purple"><${Appear} priority=${5}><p>\\[ \\sigma = \\sqrt{ \\frac{1}{N} \\sum_{i=1}^N (x_i -\\mu)^2} \\]</p>
+<${FlexBox} backgroundColor="purple">
+<${Appear} priority=${5}><p>\\[ \\sigma = \\sqrt{ \\frac{1}{N} \\sum_{i=1}^N (x_i -\\mu)^2} \\]</p>
  </${Appear}></${FlexBox}>
 
-<${FlexBox} backgroundColor="tomato"><${Appear} priority=${8}>
+<${FlexBox} backgroundColor="tomato">
+<${Appear} priority=${8}>
+
 <${Box} margin="15px">
 <${CodePane} language='js' showLineNumbers=${false} showLineNumbers=${true}>
 ${`
@@ -251,8 +308,11 @@ const bbb = () => {
 </${Appear}>
 </${FlexBox}>
 
-<${FlexBox} backgroundColor="darkcyan" className="ib1"><${Appear} priority=${9}>
-<${Image}  src="hz.jpg" alt="hz.jpg" />
+<${FlexBox} backgroundColor="darkcyan" className="ib1">
+<${Appear} priority=${9}>
+<figure>
+  <${Image} src="hz.jpg" alt="hz.jpg" width="100%" />
+</figure>
 </${Appear}>
 </${FlexBox}>
 </${Grid}>
@@ -261,38 +321,55 @@ const bbb = () => {
 
 <!------ slide (3) begin ------>
 
-<${Slide} backgroundImage="linear-gradient(to right, #159957, #155799)"><${Box} className="t1"><${UnorderedList}>
+<${Slide} backgroundImage="linear-gradient(to right, #159957, #155799)">
+<${Box} className="t1">
+<${UnorderedList}>
 <${ListItem}></${ListItem}>
 </${UnorderedList}>
 </${Box}>
 
-<${FlexBox} className="f1"><${Image} className="f1c" src="hz.jpg" alt="hz.jpg" />
+<${FlexBox} className="f1">
+<figure className="f1c">
+  <${Image} src="hz.jpg" alt="hz.jpg" width="100%" />
+</figure>
 
-<${Image}  src="hz.jpg" alt="hz.jpg" />
+<figure>
+  <${Image} src="hz.jpg" alt="hz.jpg" width="100%" />
+</figure>
 
-<${Image}  src="hz.jpg" alt="hz.jpg" />
+<figure>
+  <${Image} src="hz.jpg" alt="hz.jpg" width="100%" />
+</figure>
 
-<${Image}  src="hz.jpg" alt="hz.jpg" />
+<figure>
+  <${Image} src="hz.jpg" alt="hz.jpg" width="100%" />
+</figure>
 </${FlexBox}>
 
-<${Box} className="t2"><p>Stepper is very flexable.
-But a bit complex.
-Learn or not, your choice.</p>
+<${Box} className="t2">
+
+<div className="t21"><b>Stepper</b> is flexable.</div>
+<div className="t22">But a bit complex.</div>
+<div className="t23">Maybe this is a problem.</div>
 </${Box}>
 
-<${Stepper} values=${data1}>${stepper1}
+<${Stepper} values=${data1}>
+${stepper1}
 </${Stepper}>
 </${Slide}>
 
 
 <!------ slide (4) begin ------>
 
-<${Slide}><${Grid} className="ga"><${FlexBox}><${Box}><${Heading} fontSize=${40}>You can use third-party Libraries.</${Heading}>
+<${Slide}>
+<${Grid} className="ga"><${FlexBox}>
+<${Box}><${Heading} fontSize=${40}>You can use third-party Libraries.</${Heading}>
 
 <${Heading} fontSize=${20} color="silver">Charts, Maps and others. Whatever you want.</${Heading}>
  </${Box}></${FlexBox}>
 
-<${Appear}><${FlexBox} className="gia">
+<${Appear}>
+<${FlexBox} className="gia">
 
 <${Link} href="https://github.com/recharts/recharts">Rechart.js</${Link}>
 
@@ -305,16 +382,17 @@ Learn or not, your choice.</p>
 </${Recharts.LineChart}>
  </${FlexBox}></${Appear}>
 
-<${Appear}><${FlexBox} className="gia">
+<${Appear}>
+<${FlexBox} className="gia">
 <${Link} href="https://www.chartjs.org/">Chart.js</${Link}>
 
 
-<section style=${{ width: "400px" }}>
-  <canvas id="myChart1" style=${{width: "400px"}} className="ci"></canvas>
-</section>
+<canvas id="myChart1" className="ci"></canvas>
  </${FlexBox}></${Appear}>
 
-<${FlexBox} className="gia" style=${{ transform: "scale(0.6)" }}><p style=${{ color: "silver", fontSize: "1.2em" }}>Declare the scripts and components, then use directly.</p>
+<${FlexBox} className="gia" style=${{ transform: "scale(0.7)" }}>
+<p style=${{ color: "silver", fontSize: "1.2em" }}>Declare the scripts and components, then use directly.</p>
+
 
 <${CodePane} language='html' showLineNumbers=${false}>
 ${`
@@ -332,7 +410,8 @@ ${`
 </${CodePane}>
 </${FlexBox}>
 
-<${Stepper} values=${[2, 3]} priority=${-1}>${makeStepper(
+<${Stepper} values=${[2, 3]} priority=${-1}>
+${makeStepper(
     (v, i) => dq(".ga").className = v == 2 ? "ga gaf2" : "ga",
     (v, i) => dq(".ga").className = "ga gaf1"
 )}
@@ -342,7 +421,8 @@ ${`
 
 <!------ slide (5) begin ------>
 
-<${SlideLayout.Center}><h1>To Be Continued...</h1>
+<${SlideLayout.Center}>
+<h1>To Be Continued...</h1>
 </${SlideLayout.Center}>
 
 </${Deck}>`;
@@ -354,5 +434,6 @@ ${`
     /* presentation rendered, all finished */
 
   </script>
+
 </body>
 </html>

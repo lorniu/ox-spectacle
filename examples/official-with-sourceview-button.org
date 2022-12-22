@@ -2,7 +2,7 @@
 #+THEME: theme1
 #+TEMPLATE: tp1
 #+EXTERN_COMPONENTS: ViewSource
-#+EXPORT_LEVEL: 0
+#+EXPORT_LEVEL: 3
 
 #+Offical_Example_Url: https://github.com/FormidableLabs/spectacle/tree/main/examples/js
 
@@ -53,14 +53,11 @@ Maybe used by other slide or components.
   }
 #+end_src
 
-** extra scripts used in the export
+** extra scripts/styles
 
 #+begin_src js
   const formidableLogo = 'https://avatars2.githubusercontent.com/u/5078602?s=280&v=4';
-  const fbc = { alignItems: "center", justifyContent: "center" };
 #+end_src
-
-** extra styles used in the export
 
 #+begin_src css
   .my-warning {
@@ -102,6 +99,16 @@ Styles used by the component:
   .viewsource > i { cursor: pointer; font-size: 10px; padding: 15px 0; margin: 0; text-decoration: underline; }
   .viewsource pre { zoom: 0.7 }
 #+end_src
+** Other Components
+
+#+EXTERN_COMPONENTS: SlideWithTitle Grid2x2 BoxCenter
+
+#+begin_src js
+  const SlideWithTitle = (props) => html`<${Slide} ...${props}><${Heading}>${props.title}</${Heading}>${props.children}</${Slide}>`;
+  const Grid2x2 = (props) => html`<${Grid} ...${props}, gridTemplateRows="50% 50%", gridTemplateColumns="50% 50%" height="100%"></${Grid}>`;
+  const BoxCenter = (props) => html`<${FlexBox} ...${props}, alignItems="center", justifyContent="center"></${FlexBox}>`;
+#+end_src
+
 * Logo
 ** <FlexBox height="100%">
 
@@ -159,13 +166,11 @@ Where you can write your decks in JSX, Markdown, or MDX!
     Where you can write your decks in JSX, Markdown, or MDX!
 #+end_src
 
-* Backgrounds and List
+* Custom Backgrounds
 :PROPERTIES:
+:type: SlideWithTitle
 :props: transition={ts1} backgroundColor="tertiary" backgroundImage="url(https://github.com/FormidableLabs/dogs/blob/main/src/beau.jpg?raw=true)" backgroundOpacity={0.5}
 :END:
-
-#+ATTR_HTML: :type Heading
-Custom Backgrounds
 
 - =backgroundColor=
 - =backgroundImage=
@@ -177,13 +182,11 @@ Custom Backgrounds
 ** <ViewSource>
 
 #+begin_src org
-  ,* Backgrounds and List
+  ,* Custom Backgrounds
     :PROPERTIES:
+    :type: SlideWithTitle
     :props: transition={ts1} backgroundColor="tertiary" backgroundImage="url(...)" backgroundOpacity={0.5}
     :END:
-
-    ,#+ATTR_HTML: :type Heading
-    Custom Backgrounds
 
     - =backgroundColor=
     - =backgroundImage=
@@ -194,9 +197,9 @@ Custom Backgrounds
 #+end_src
 
 * Animated Elements
-
-#+ATTR_HTML: :type Heading
-Animated Elements
+:PROPERTIES:
+:type: SlideWithTitle
+:END:
 
 1. <A> Elements can animate in!
 2. <A> Out of order
@@ -206,9 +209,9 @@ Animated Elements
 
 #+begin_src org
   ,* Animated Elements
-
-    ,#+ATTR_HTML: :type Heading
-    Animated Elements
+    :PROPERTIES:
+    :type: SlideWithTitle
+    :END:
 
     1. <A> Elements can animate in!
     2. <A> Out of order
@@ -290,50 +293,54 @@ Double-size Grid Item
     ,#+end_src
 #+end_src
 
-* Fragment1
+* Fragments
+:PROPERTIES:
+:layout: top
+:END:
+
+** Fragment1
 
 This is a slide fragment.
 
-** <ViewSource>
+*** <ViewSource>
 
 #+begin_src org
-  ,* Fragment1
+  ,** Fragment1
 
     This is a slide fragment.
 #+end_src
 
-* Fragment2
+** Fragment2
 
 This is also a slide fragment.
 
-** <Appear>
+*** <Appear>
 
 This item shows up!
 
-** <Appear>
+*** <Appear>
 
 This item also shows up!
 
-** <ViewSource>
+*** <ViewSource>
 
 #+begin_src org
-  ,* Fragment2
+  ,** Fragment2
 
     This is also a slide fragment.
 
-  ,** <Appear>
+  ,*** <Appear>
 
     This item shows up!
 
-  ,** <Appear>
+  ,*** <Appear>
 
     This item also shows up!
 #+end_src
 
 * CodePane
 
-#+ATTR_HTML: :showLineNumbers {true} :marginBottom {20}
-#+begin_src jsx
+#+begin_src jsx -n
   import { createClient, Provider } from 'urql';
 
   const client = createClient({ url: 'https://0ufyz.sse.codesandbox.io' });
@@ -344,6 +351,8 @@ This item also shows up!
     </Provider>
   );
 #+end_src
+
+#+SPLIT: 1
 
 #+begin_src java
   public class NoLineNumbers {
@@ -358,8 +367,7 @@ This item also shows up!
 #+begin_src org
   ,* CodePane
 
-    ,#+ATTR_HTML: :showLineNumbers {true} :marginBottom {20}
-    ,#+begin_src jsx
+    ,#+begin_src jsx -n
       import { createClient, Provider } from 'urql';
 
       const client = createClient({ url: 'https://0ufyz.sse.codesandbox.io' });
@@ -370,6 +378,8 @@ This item also shows up!
         </Provider>
       );
     ,#+end_src
+
+    ,#+SPLIT: 1
 
     ,#+begin_src java
       public class NoLineNumbers {
@@ -438,47 +448,47 @@ Markdown slides is not supported, I don't think it's necessary.
     Markdown slides is not supported, I don't think it's necessary.
 #+end_src
 
-* Grid
-** <Grid gridTemplateColumns="50% 50%" gridTemplateRows="50% 50%" height="100%">
-*** <FlexBox ...{fbc}>
+* Grid 
+** <Grid2x2>
+*** <BoxCenter>
 
 #+ATTR_HTML: :type Heading
 This is a 4x4 Grid
 
-*** <FlexBox ...{fbc}>
+*** <BoxCenter>
 
 #+ATTR_HTML: :textAlign center
 With all the content aligned and justified center.
 
-*** <FlexBox ...{fbc}>
+*** <BoxCenter>
 
 #+ATTR_HTML: :textAlign center
 It uses Spectacle =<Grid />= and =<FlexBox />= components.
 
-*** <FlexBox ...{fbc}>
+*** <BoxCenter>
 
 <Box width={200} height={200} backgroundColor="secondary" />
 
 ** <ViewSource>
 
 #+begin_src org
-  ,* <Grid ...{fba}>
-  ,** <FlexBox ...{fbc}>
+  ,* <Grid2x2>
+  ,** <BoxCenter>
 
     ,#+ATTR_HTML: :type Heading
     This is a 4x4 Grid
 
-  ,** <FlexBox ...{fbc}>
+  ,** <BoxCenter>
 
     ,#+ATTR_HTML: :textAlign center
     With all the content aligned and justified center.
 
-  ,** <FlexBox ...{fbc}>
+  ,** <BoxCenter>
 
     ,#+ATTR_HTML: :textAlign center
     It uses Spectacle =<Grid />= and =<FlexBox />= components.
 
-  ,** <FlexBox ...{fbc}>
+  ,** <BoxCenter>
 
     <Box width={200} height={200} backgroundColor="secondary" />
 #+end_src
@@ -504,9 +514,9 @@ It uses Spectacle =<Grid />= and =<FlexBox />= components.
 :layout: Center
 :END:
 
-<div class="anibox">
+#+begin_div class="anibox"
   <SpectacleLogo size={100} />
-</div>
+#+end_div
 
 #+ATTR_HTML: :type config
 #+begin_src css
@@ -522,9 +532,9 @@ It uses Spectacle =<Grid />= and =<FlexBox />= components.
     :layout: Center
     :END:
 
-   <div class="anibox">
-     <SpectacleLogo size={100} />
-   </div>
+    ,#+begin_div class="anibox"
+      <SpectacleLogo size={100} />
+    ,#+end_div
 #+end_src
 
 #+ATTR_HTML: :marginTop "8px"

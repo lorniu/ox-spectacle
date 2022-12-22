@@ -5,6 +5,7 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
   <title>示例幻灯片</title>
 
+
 <!-- scripts -->
 
 <script src='https://unpkg.com/react@18.1.0/umd/react.production.min.js'></script>
@@ -14,10 +15,27 @@
 <script src='https://unpkg.com/spectacle@^9/dist/spectacle.min.js'></script>
 <script src='https://unpkg.com/htm'></script>
 
+<!-- styles -->
+
+<style>
+
+.codepane {}
+.split-container {
+  display: flex; flex-flow: column nowrap; justify-content: flex-start;
+  align-items: stretch; height: inherit; max-height: 100vh;
+}
+::-webkit-scrollbar { width: 5px; height: 80%; }
+::-webkit-scrollbar-track { background: rgb(179, 177, 177); border-radius: 5px; }
+::-webkit-scrollbar-thumb { background: rgb(136, 136, 136); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover  { background: rgb(100, 100, 100); border-radius: 5px; }
+::-webkit-scrollbar-thumb:active { background: rgb(68, 68, 68); border-radius: 5px; }
+
+</style>
+
 </head>
 
 <body>
-  <div id='root'></div>
+  <div id="root"></div>
   <script type='module'>
 
     /* imports */
@@ -53,9 +71,13 @@
 
 <!------ slide (1) begin ------>
 
-<${Slide}><${Text}>这是第一个页面。</${Text}>
+<${Slide}>
+<${Text}>这是第一个页面。</${Text}>
 
-<${Image} width="200" style=${{ margin: "2em" }} src="https://formidable.com/open-source/spectacle/svg/formidable-logo-white.svg" alt="formidable-logo-white.svg" />
+<figure>
+  <${Image} src="https://formidable.com/open-source/spectacle/svg/formidable-logo-white.svg" alt="formidable-logo-white.svg" width="200" style=${{ margin: "2em" }} />
+</figure>
+
 
 <${Box} margin=${2} width=${900}>
 <${CodePane} language='html' showLineNumbers=${false} showLineNumbers=${true}>
@@ -75,7 +97,8 @@ ${`
 
 <!------ slide (2) begin ------>
 
-<${Slide}><${Heading} fontFamily="Kaiti">列表和动画演示</${Heading}>
+<${Slide}>
+<${Heading} fontFamily="Kaiti">列表和动画演示</${Heading}>
 
 <${UnorderedList}>
 <${ListItem}>从前有座山，山中有座庙</${ListItem}>
@@ -96,7 +119,9 @@ ${`
 <${ListItem}>故事讲完。谁赞成，谁反对？</${ListItem}>
 </${UnorderedList}>
 
-<${Appear}><${Box} position="absolute" top="0" right="0" style=${{zoom: 0.6}}><${CodePane} language='org' showLineNumbers=${false}>
+<${Appear}>
+<${Box} position="absolute" top="0" right="0" style=${{zoom: 0.6}}>
+<${CodePane} language='org' showLineNumbers=${false}>
 ${`
    #+ATTR_HTML: :type Heading :fontFamily Kaiti
    列表和动画演示
@@ -110,6 +135,7 @@ ${`
 
 `}
 </${CodePane}>
+
 
 <${Box} marginTop="10px">
 <${CodePane} language='html' showLineNumbers=${false}>
@@ -141,8 +167,7 @@ ${`
 `}
 </${CodePane}>
 </${Box}>
-</${Box}>
-</${Appear}>
+ </${Box}></${Appear}>
 </${Slide}>
 
 </${Deck}>`;
@@ -154,5 +179,6 @@ ${`
     /* presentation rendered, all finished */
 
   </script>
+
 </body>
 </html>

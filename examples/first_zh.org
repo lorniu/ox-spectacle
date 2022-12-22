@@ -29,8 +29,7 @@
         + <A fontFamily="Kaiti"> 从前有座山……
    - 故事讲完。谁赞成，谁反对？
 
-** <Appear>
-*** <Box position="absolute" top="0" right="0" style={{zoom: 0.6}}>
+** Code <Appear><Box position="absolute" top="0" right="0" style={{zoom: 0.6}}>
 
    #+begin_src org
      ,#+ATTR_HTML: :type Heading :fontFamily Kaiti

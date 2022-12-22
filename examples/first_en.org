@@ -29,8 +29,7 @@
         + <A fontFamily="monospace"> and feet...
    - This is the story
 
-** <Appear>
-*** <Box position="absolute" top="0" right="0" style={{zoom: 0.6}}>
+** Code <Appear><Box position="absolute" top="0" right="0" style={{zoom: 0.6}}>
 
    #+begin_src org
      ,#+ATTR_HTML: :type Heading :fontFamily serif

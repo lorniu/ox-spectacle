@@ -5,6 +5,7 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
   <title>The offical example rewritten with org/ox-spectacle</title>
 
+
 <!-- scripts -->
 
 <script src='https://unpkg.com/react@18.1.0/umd/react.production.min.js'></script>
@@ -14,9 +15,23 @@
 <script src='https://unpkg.com/spectacle@^9/dist/spectacle.min.js'></script>
 <script src='https://unpkg.com/htm'></script>
 
-<!-- extra css catch from the org file -->
+<!-- styles -->
 
 <style>
+
+.codepane {}
+.split-container {
+  display: flex; flex-flow: column nowrap; justify-content: flex-start;
+  align-items: stretch; height: inherit; max-height: 100vh;
+}
+::-webkit-scrollbar { width: 5px; height: 80%; }
+::-webkit-scrollbar-track { background: rgb(179, 177, 177); border-radius: 5px; }
+::-webkit-scrollbar-thumb { background: rgb(136, 136, 136); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover  { background: rgb(100, 100, 100); border-radius: 5px; }
+::-webkit-scrollbar-thumb:active { background: rgb(68, 68, 68); border-radius: 5px; }
+
+/* extra css catch from the org file */
+
 @keyframes beat { to { transform: scale(1.4) } }
 .anibox { animation: beat .5s infinite alternate; transform-origin: center; }
 
@@ -30,12 +45,13 @@
     color: red;
     content: "WARNING: ";
 }
+
 </style>
 
 </head>
 
 <body>
-  <div id='root'></div>
+  <div id="root"></div>
   <script type='module'>
 
     /* imports */
@@ -110,8 +126,10 @@ const ts1 = {
 }
 
 const formidableLogo = 'https://avatars2.githubusercontent.com/u/5078602?s=280&v=4';
-const fba = { gridTemplateColumns: "50% 50%", gridTemplateRows: "50% 50%", height: "100%" };
-const fbc = { alignItems: "center", justifyContent: "center" };
+
+const SlideWithTitle = (props) => html`<${Slide} ...${props}><${Heading}>${props.title}</${Heading}>${props.children}</${Slide}>`;
+const Grid2x2 = (props) => html`<${Grid} ...${props}, gridTemplateRows="50% 50%", gridTemplateColumns="50% 50%" height="100%"></${Grid}>`;
+const BoxCenter = (props) => html`<${FlexBox} ...${props}, alignItems="center", justifyContent="center"></${FlexBox}>`;
 
 
     /* presentation definition begin */
@@ -120,11 +138,14 @@ const fbc = { alignItems: "center", justifyContent: "center" };
 
 <!------ slide (1) begin ------>
 
-<${Slide}><${FlexBox} height="100%">
+<${Slide}>
+<${FlexBox} height="100%">
+
 <${SpectacleLogo} size=${500} />
 </${FlexBox}>
 
-<${Notes}><${Text}>Spectacle supports notes per slide.
+<${Notes}>
+<${Text}>Spectacle supports notes per slide.
 <ol>
   <li>Notes can now be HTML markup!</li>
   <li>Lists can make it easier to make points.</li>
@@ -135,19 +156,18 @@ const fbc = { alignItems: "center", justifyContent: "center" };
 
 <!------ slide (2) begin ------>
 
-<${Slide}><${FlexBox} height="100%" flexDirection="column"><${Heading} margin="0px" fontSize="150px">✨<i>Spectacle</i> ✨</${Heading}>
+<${Slide}>
+<${FlexBox} height="100%" flexDirection="column"><${Heading} margin="0px" fontSize="150px">✨<i>Spectacle</i> ✨</${Heading}>
 
 <${Heading} margin="0px" fontSize="h2">A ReactJS Presentation Library</${Heading}>
 
 <${Heading} margin="0px 32px" fontSize="h3" color="primary">Where you can write your decks in JSX, Markdown, or MDX!</${Heading}>
-</${FlexBox}>
-</${Slide}>
+ </${FlexBox}></${Slide}>
 
 
 <!------ slide (3) begin ------>
 
-<${Slide} transition=${ts1} backgroundColor="tertiary" backgroundImage="url(https://github.com/FormidableLabs/dogs/blob/main/src/beau.jpg?raw=true)" backgroundOpacity=${0.5}><${Heading}>Custom Backgrounds</${Heading}>
-
+<${SlideWithTitle} title="Custom Backgrounds" num=${[3]} transition=${ts1} backgroundColor="tertiary" backgroundImage="url(https://github.com/FormidableLabs/dogs/blob/main/src/beau.jpg?raw=true)" backgroundOpacity=${0.5}>
 <${UnorderedList}>
 <${ListItem}><${CodeSpan}>${`backgroundColor`}</${CodeSpan}></${ListItem}>
 <${ListItem}><${CodeSpan}>${`backgroundImage`}</${CodeSpan}></${ListItem}>
@@ -156,13 +176,12 @@ const fbc = { alignItems: "center", justifyContent: "center" };
 <${ListItem}><${CodeSpan}>${`backgroundPosition`}</${CodeSpan}></${ListItem}>
 <${ListItem}><${CodeSpan}>${`backgroundRepeat`}</${CodeSpan}></${ListItem}>
 </${UnorderedList}>
-</${Slide}>
+</${SlideWithTitle}>
 
 
 <!------ slide (4) begin ------>
 
-<${Slide}><${Heading}>Animated Elements</${Heading}>
-
+<${SlideWithTitle} title="Animated Elements" num=${[4]}>
 <${OrderedList}>
 <${Appear}>
 <${ListItem}>Elements can animate in!</${ListItem}>
@@ -174,12 +193,14 @@ const fbc = { alignItems: "center", justifyContent: "center" };
 <${ListItem} priority=${0}>Just identify the order with the prop <${CodeSpan}>${`priority`}</${CodeSpan}></${ListItem}>
 </${Appear}>
 </${OrderedList}>
-</${Slide}>
+</${SlideWithTitle}>
 
 
 <!------ slide (5) begin ------>
 
-<${Slide}><${FlexBox}><${Text}>These</${Text}>
+<${Slide}>
+<${FlexBox}>
+<${Text}>These</${Text}>
 
 <${Text}>Text</${Text}>
 
@@ -188,41 +209,49 @@ const fbc = { alignItems: "center", justifyContent: "center" };
 <${Text} fontWeight="bold">Flex</${Text}>
 </${FlexBox}>
 
-<${Grid} gridTemplateColumns="1fr 2fr" gridColumnGap=${15}><${Box} backgroundColor="primary"><${Text} color="secondary">Single-size Grid Item</${Text}>
+<${Grid} gridTemplateColumns="1fr 2fr" gridColumnGap=${15}>
+<${Box} backgroundColor="primary">
+<${Text} color="secondary">Single-size Grid Item</${Text}>
 </${Box}>
 
-<${Box} backgroundColor="secondary"><${Text} color="primary">Double-size Grid Item</${Text}>
+<${Box} backgroundColor="secondary">
+<${Text} color="primary">Double-size Grid Item</${Text}>
 </${Box}>
 </${Grid}>
 
-<${Grid} gridTemplateColumns="1fr 1fr 1fr" gridTemplateRows="1fr 1fr 1fr" gridRowGap=${1}>${ renderSomeBoxes(9) }
+<${Grid} gridTemplateColumns="1fr 1fr 1fr" gridTemplateRows="1fr 1fr 1fr" gridRowGap=${1}>
+${ renderSomeBoxes(9) }
 </${Grid}>
 </${Slide}>
 
 
-<!------ slide (6) begin ------>
+<!------ slide (6_1) begin ------>
 
-<${Slide}><${Text}>This is a slide fragment.</${Text}>
+<${Slide}>
+<${Text}>This is a slide fragment.</${Text}>
+</${Slide}>
+
+
+<!------ slide (6_2) begin ------>
+
+<${Slide}>
+<${Text}>This is also a slide fragment.</${Text}>
+
+<${Appear}>
+<${Text}>This item shows up!</${Text}>
+</${Appear}>
+
+<${Appear}>
+<${Text}>This item also shows up!</${Text}>
+</${Appear}>
 </${Slide}>
 
 
 <!------ slide (7) begin ------>
 
-<${Slide}><${Text}>This is also a slide fragment.</${Text}>
-
-<${Appear}><${Text}>This item shows up!</${Text}>
-</${Appear}>
-
-<${Appear}><${Text}>This item also shows up!</${Text}>
-</${Appear}>
-</${Slide}>
-
-
-<!------ slide (8) begin ------>
-
 <${Slide}>
-<${Box} marginBottom=${20}>
-<${CodePane} language='jsx' showLineNumbers=${false} showLineNumbers=${true}>
+
+<${CodePane} language='jsx'>
 ${`
 import { createClient, Provider } from 'urql';
 
@@ -236,7 +265,8 @@ const App = () => (
 
 `}
 </${CodePane}>
-</${Box}>
+
+<${Box} height="1em"></${Box}>
 
 
 <${CodePane} language='java' showLineNumbers=${false}>
@@ -252,17 +282,19 @@ public class NoLineNumbers {
 </${Slide}>
 
 
-<!------ slide (9) begin ------>
+<!------ slide (8) begin ------>
 
-<${Slide}><${Heading}>This is a slide embedded in div.</${Heading}>
+<${Slide}>
+<${Heading}>This is a slide embedded in div.</${Heading}>
 
 <p class="my-warning">This is not implement yet, because i don't understand what this used for.</p>
 </${Slide}>
 
 
-<!------ slide (10) begin ------>
+<!------ slide (9) begin ------>
 
-<${Slide}><${Text}>Write Slides with markdown?</${Text}>
+<${Slide}>
+<${Text}>Write Slides with markdown?</${Text}>
 
 
 <${Box} margin="1em 1.5em 5em 1.5em">
@@ -283,34 +315,41 @@ ${`
 </${Slide}>
 
 
+<!------ slide (10) begin ------>
+
+<${Slide}>
+<${Grid2x2}><${BoxCenter}>
+<${Heading}>This is a 4x4 Grid</${Heading}>
+</${BoxCenter}>
+
+<${BoxCenter}>
+<${Text} textAlign="center">With all the content aligned and justified center.</${Text}>
+</${BoxCenter}>
+
+<${BoxCenter}>
+<${Text} textAlign="center">It uses Spectacle <${CodeSpan}>${`<Grid />`}</${CodeSpan}> and <${CodeSpan}>${`<FlexBox />`}</${CodeSpan}> components.</${Text}>
+</${BoxCenter}>
+
+<${BoxCenter}>
+
+<${Box} width=${200} height=${200} backgroundColor="secondary" />
+</${BoxCenter}>
+ </${Grid2x2}></${Slide}>
+
+
 <!------ slide (11) begin ------>
 
-<${Slide}><${Grid} ...${fba}><${FlexBox} ...${fbc}><${Heading}>This is a 4x4 Grid</${Heading}>
-</${FlexBox}>
-
-<${FlexBox} ...${fbc}><${Text} textAlign="center">With all the content aligned and justified center.</${Text}>
-</${FlexBox}>
-
-<${FlexBox} ...${fbc}><${Text} textAlign="center">It uses Spectacle <${CodeSpan}>${`<Grid />`}</${CodeSpan}> and <${CodeSpan}>${`<FlexBox />`}</${CodeSpan}> components.</${Text}>
-</${FlexBox}>
-
-<${FlexBox} ...${fbc}>
-<${Box} width=${200} height=${200} backgroundColor="secondary" />
-</${FlexBox}>
- </${Grid}></${Slide}>
+<${SlideLayout.List} title="Slide layouts" items=${['Two-column', 'Lists' , 'Center', 'And more!']} animateListItems>
+</${SlideLayout.List}>
 
 
 <!------ slide (12) begin ------>
 
-<${SlideLayout.List} title="Slide layouts" items=${['Two-column', 'Lists' , 'Center', 'And more!']} animateListItems></${SlideLayout.List}>
-
-
-<!------ slide (13) begin ------>
-
 <${SlideLayout.Center}>
-<div class="anibox">
-  <${SpectacleLogo} size=${100} />
-</div>
+<p class="anibox">
+
+<${SpectacleLogo} size=${100} />
+</p>
 </${SlideLayout.Center}>
 
 </${Deck}>`;
@@ -322,5 +361,6 @@ ${`
     /* presentation rendered, all finished */
 
   </script>
+
 </body>
 </html>
