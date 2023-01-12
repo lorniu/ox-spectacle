@@ -395,7 +395,7 @@ Parse and return them as cons. If NORMED non-nil, apply the filters on props."
   (setq opts (org-export-data (plist-get info opts) info))
   (when (> (length opts) 0)
     (let (tag props (case-fold-search nil))
-      (let ((tg (car (string-split opts))))
+      (let ((tg (car (split-string opts))))
         (when (and tg (string-match-p "^\\([A-Z][^=]+\\|[a-z][a-z0-9]*\\)$" tg))
           (setq tag tg)))
       (setq props (string-trim (cl-subseq opts (length tag))))
