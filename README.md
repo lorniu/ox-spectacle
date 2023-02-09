@@ -104,7 +104,7 @@ Brief summary:
 ### Basic Rules
 
 The top-level headline is rendered by default as `<Slide>`, it can be set using `PROPERTY DRAWER`:
-- Use `:layout` to replace the rendered component with `<SlideLayout>`. For example `:layout: Center` will render the current headline as `<SlideLayout.Center>`
+- Use `:layout:` to replace the rendered component with `<SlideLayout>`. For example `:layout: Center` will render the current headline as `<SlideLayout.Center>`
 - If `:layout: top` is setted on a headline, then its children will be rendered as `Slide` instead!
 - Use `:props:` to pass in props to the component. For example `:props: backgroundImage="url(...)" backgroundOpacity={0.5}` will set a translucent background for the current slide
 
@@ -464,6 +464,8 @@ You can set separate config `theme/template/transition` for some slides or compo
     ls
   #+end_src
 ```
+
+Look command `ox-spectacle-helper` for help when nessessary.
 
 ## Miscellaneous
 
