@@ -486,6 +486,14 @@ INFO is a plist."
   "Add advices to BODY."
   `(cl-letf (((symbol-function 'string-trim) 'org-trim)
              ((symbol-function 'org-html--make-attribute-string) 'ox-spectacle--make-attribute-string))
+     ;; Force the use of sub/superscript syntax like 'aaa_{3}' to avoid accidental escaping of _ and ^ in links (#6)
+     ;; No better solution found for supressing sub/superscript easily, because it's hardcode in 'org-element' parser
+     (setq-local org-match-substring-regexp
+                 (concat
+                  "\\(\\S-\\)\\([_^]\\)\\("
+                  "\\(?:" (org-create-multibrace-regexp "{" "}" org-match-sexp-depth) "\\)"
+                  "\\|"
+                  "\\(?:" (org-create-multibrace-regexp "(" ")" org-match-sexp-depth) "\\)\\)"))
      ,@body))
 
 
