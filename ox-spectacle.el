@@ -453,9 +453,9 @@ When ELEMENT is headline and WITH-SELF is t, then add itself to the result."
 (defun ox-spectacle--maybe-appear (contents flags)
   "Wrap CONTENTS with <Appear> if FLAGS is A/NUM-props style."
   (if (and flags (string-match "^\\([A0-9]\\)[ \t]*\\(.*\\)$" flags))
-      (let ((priority (when-let ((s (match-string 1 flags)))
+      (let ((priority (when-let* ((s (match-string 1 flags)))
                         (if (string-equal s "A") nil s)))
-            (props (when-let ((s (match-string 2 flags)))
+            (props (when-let* ((s (match-string 2 flags)))
                      (ox-spectacle--props-compat-react-htm s))))
         (concat "<${Appear}"
                 (ox-spectacle--wa props)
@@ -583,7 +583,7 @@ holding contextual information."
             (cond
              ;; take <template> section as a template definition
              ((and (= level 2) (string-match tpl-regexp title))
-              (if-let ((name (match-string 1 title)))
+              (if-let* ((name (match-string 1 title)))
                   (prog1 ""
                     (setq ox-spectacle--frags-template
                           (append ox-spectacle--frags-template
@@ -727,7 +727,7 @@ contextual information."
     (if (and flags (not (string-match-p "^\\([A0-9]\\)[ \t]*\\(.*\\)$" flags)))
         (setq tag (car (split-string flags nil t))
               tag-props (if (string= tag flags) nil (ox-spectacle--filter-props (cl-subseq flags (length tag)))))
-      (if-let ((text-opts (ox-spectacle--extract-options :text-opts info)))
+      (if-let* ((text-opts (ox-spectacle--extract-options :text-opts info)))
           (setq tag (car text-opts)
                 tag-props (ox-spectacle--wa (cdr text-opts)))
         (setq tag "Text" tag-props nil)))
@@ -765,9 +765,9 @@ holding contextual information."
          (params (org-element-property :parameters special-block))
          (props (org-export-read-attribute :attr_html special-block))
          (flags (cadr (ox-spectacle--pop-from-plist props :type)))
-         (tag (if-let ((c (cl-find-if
-                           (lambda (c) (string-match-p (concat "^" c "$") type))
-                           (ox-spectacle--available-components))))
+         (tag (if-let* ((c (cl-find-if
+                            (lambda (c) (string-match-p (concat "^" c "$") type))
+                            (ox-spectacle--available-components))))
                   (concat "${" c "}")
                 type))
          (contents (format "<%s%s>\n%s</%s>" tag
@@ -957,9 +957,9 @@ INFO is a plist holding contextual information."
              (loctype (org-element-type loc))
              (destination loc)
              (id (org-element-property :CUSTOM_ID loc)))
-        (when-let ((hd (and loctype
-                            (not (member loctype '(headline plain-text)))
-                            (car (last (org-element-lineage loc 'headline))))))
+        (when-let* ((hd (and loctype
+                             (not (member loctype '(headline plain-text)))
+                             (car (last (org-element-lineage loc 'headline))))))
           (setq destination hd))
         (if (equal (org-element-type destination) 'headline)
             (let* ((headlines (cl-remove-if
