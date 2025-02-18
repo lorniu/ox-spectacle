@@ -7,7 +7,7 @@
 ;; URL: https://github.com/lorniu/ox-spectacle
 ;; Package-Requires: ((emacs "28.1") (org "8.3"))
 ;; Keywords: convenience
-;; Version: 2.0
+;; Version: 2.0.1
 
 ;; This file is not part of GNU Emacs.
 
